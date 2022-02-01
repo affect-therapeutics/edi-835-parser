@@ -15,8 +15,8 @@ path = 'input/sample_835.txt'
 transaction_set = parse(path)
 
 data1, data2 = transaction_set.to_dataframe()
-data1.to_csv("output/sample_remits_835.txt")
+data1.to_csv("output/sample_remits_835.txt", sep='|')
 
-data2.to_csv("output/sample_payers_835.txt")
+data2.to_csv("output/sample_payers_835.txt", sep='|')
 
 
