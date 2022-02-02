@@ -28,26 +28,6 @@ class Organization:
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
 
-	@property
-	def payer_contact_business(self) -> Optional[PayerContactSegment]:
-		if self.organization.type == 'payer':
-			contact_business = [c for c in self.contacts if c.code == 'payers_claim_office']
-			assert len(contact_business) <= 1
-			return contact_business[0]
-
-	@property
-	def payer_contact_web(self) -> Optional[PayerContactSegment]:
-		if self.organization.type == 'payer':
-			contact_web = [c for c in self.contacts if c.code == 'information_contact']
-			assert len(contact_web) <= 1
-
-			if len(contact_web) == 1:
-				return contact_web[0]
-			else:
-				return None
-
-
-
 
 	@classmethod
 	def build(cls, current_segment: str, segments: Iterator[str]) -> Tuple[
@@ -62,9 +42,6 @@ class Organization:
 				if segment is None:
 					segment = segments.__next__()
 
-		# while True:
-		# 	try:
-		# 		segment = segments.__next__()
 				identifier = find_identifier(segment)
 
 				if identifier == AddressSegment.identification:

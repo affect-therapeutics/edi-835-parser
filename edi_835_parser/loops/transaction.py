@@ -35,54 +35,46 @@ class Transaction:
         return '\n'.join(str(item) for item in self.__dict__.items())
 
     @property
-    def payer(self) -> Optional[OrganizationSegment]:
+    def payer(self) -> OrganizationSegment:
             payer = [c for c in self.organizations if c.organization.type == 'payer']
-            assert len(payer) <= 1
-            if len(payer) == 1:
-                return payer[0].organization
+            assert len(payer) == 1
+            return payer[0].organization
 
     @property
-    def payer_address(self) -> Optional[AddressSegment]:
+    def payer_address(self) -> AddressSegment:
             payer = [c for c in self.organizations if c.organization.type == 'payer']
-            assert len(payer) <= 1
-            if len(payer) == 1:
-                return payer[0].address
+            assert len(payer) == 1
+            return payer[0].address
 
     @property
-    def payer_location(self) -> Optional[LocationSegment]:
+    def payer_location(self) -> LocationSegment:
             payer = [c for c in self.organizations if c.organization.type == 'payer']
-            assert len(payer) <= 1
-            if len(payer) == 1:
-                return payer[0].location
+            assert len(payer) == 1
+            return payer[0].location
 
     @property
     def payer_contact_business(self) -> Optional[PayerContactSegment]:
         payer = [c for c in self.organizations if c.organization.type == 'payer']
-        assert len(payer) <= 1
-        if len(payer) == 1:
-            contact_business = [a for a in payer[0].contacts if a.code == 'payers_claim_office']
-            assert len(contact_business) <= 1
-            if len(contact_business) == 1:
-                return contact_business[0]
+        assert len(payer) == 1
+        contact_business = [a for a in payer[0].contacts if a.code == 'payers_claim_office']
+        assert len(contact_business) <= 1
+        if len(contact_business) == 1:
+            return contact_business[0]
 
     @property
     def payer_contact_web(self) -> Optional[PayerContactSegment]:
         payer = [c for c in self.organizations if c.organization.type == 'payer']
-        assert len(payer) <= 1
-        if len(payer) == 1:
-            contact_business = [a for a in payer[0].contacts if a.code == 'information_contact']
-            assert len(contact_business) <= 1
-            if len(contact_business) == 1:
-                return contact_business[0]
-
+        assert len(payer) == 1
+        contact_business = [a for a in payer[0].contacts if a.code == 'information_contact']
+        assert len(contact_business) <= 1
+        if len(contact_business) == 1:
+            return contact_business[0]
 
     @property
-    def payee(self) -> Optional[OrganizationSegment]:
+    def payee(self) -> OrganizationSegment:
             payee = [c for c in self.organizations if c.organization.type == 'payee']
-            assert len(payee) <= 1
-            if len(payee) == 1:
-                return payee[0].organization
-
+            assert len(payee) == 1
+            return payee[0].organization
 
     @classmethod
     def build(cls, segment: str, segments: Iterator[str]) -> Tuple['Transaction', Optional[Iterator[str]], Optional[str]]:
