@@ -85,14 +85,14 @@ class TransactionSet:
 			'bt_facility_type_code_clp09': claim.claim.claim_frequency_code,
 			'payee_id_qualifier': transaction.payee.identification_code_qualifier,
 			'payee_id': transaction.payee.identification_code,
-			'provider_entity_type_qualifier': claim.rendering_provider.type,
-			'provider_id_qualifier': claim.rendering_provider.identification_code_qualifier,
-			'provider_id': claim.rendering_provider.identification_code,
+			'provider_entity_type_qualifier': claim.rendering_provider.type if claim.rendering_provider else None,
+			'provider_id_qualifier': claim.rendering_provider.identification_code_qualifier if claim.rendering_provider else None,
+			'provider_id': claim.rendering_provider.identification_code if claim.rendering_provider else None,
 			'provider_name': claim.rendering_provider.name if claim.rendering_provider else None,
-			'provider_first_name': claim.rendering_provider.first_name,
-			'provider_middle_name': claim.rendering_provider.middle_name,
-			'provider_suffix': claim.rendering_provider.name_suffix,
-			'provider_prefix': claim.rendering_provider.name_prefix,
+			'provider_first_name': claim.rendering_provider.first_name if claim.rendering_provider else None,
+			'provider_middle_name': claim.rendering_provider.middle_name if claim.rendering_provider else None,
+			'provider_suffix': claim.rendering_provider.name_suffix if claim.rendering_provider else None,
+			'provider_prefix': claim.rendering_provider.name_prefix if claim.rendering_provider else None,
 			'claim_received_date': claim.claim_received_date.date,
 			'claim_paid_date': transaction.financial_information.transaction_date,
 			'claim_status': claim.claim.status,
@@ -127,12 +127,18 @@ class TransactionSet:
 			'payer_state': transaction.payer_location.state,
 			'payer_zip': transaction.payer_location.zip_code,
 			'payer_country': transaction.payer_location.country,
-			'payer_contact_business': transaction.payer_contact_business.communication_no_or_url,
-			'payer_contact_business_qualifier': transaction.payer_contact_business.communication_no_or_url_qualifier,
-			'payer_contact_business_name': transaction.payer_contact_business.name,
-			'payer_contact_web': transaction.payer_contact_web.communication_no_or_url if transaction.payer_contact_web else None,
-			'payer_contact_web_qualifier': transaction.payer_contact_web.communication_no_or_url_qualifier if transaction.payer_contact_web else None,
-			'payer_contact_web_name': transaction.payer_contact_web.name if transaction.payer_contact_web else None
+			'payer_contact_business': transaction.payer_contact_business.communication_no_or_url
+			if transaction.payer_contact_business else None,
+			'payer_contact_business_qualifier': transaction.payer_contact_business.communication_no_or_url_qualifier
+			if transaction.payer_contact_business else None,
+			'payer_contact_business_name': transaction.payer_contact_business.name
+			if transaction.payer_contact_business else None,
+			'payer_contact_web': transaction.payer_contact_web.communication_no_or_url
+			if transaction.payer_contact_web else None,
+			'payer_contact_web_qualifier': transaction.payer_contact_web.communication_no_or_url_qualifier
+			if transaction.payer_contact_web else None,
+			'payer_contact_web_name': transaction.payer_contact_web.name
+			if transaction.payer_contact_web else None
 
 
 		}
