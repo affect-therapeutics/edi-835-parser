@@ -1,5 +1,5 @@
 from typing import Iterator, Tuple, Optional, List
-from warnings import warn
+import logging
 
 from edi_835_parser.loops.claim import Claim as ClaimLoop
 from edi_835_parser.loops.organization import Organization as OrganizationLoop
@@ -10,6 +10,11 @@ from edi_835_parser.segments.location import Location as LocationSegment
 from edi_835_parser.segments.address import Address as AddressSegment
 from edi_835_parser.segments.payer_contact import PayerContact as PayerContactSegment
 from edi_835_parser.segments.financial_information import FinancialInformation as FinancialInformationSegment
+from edi_835_parser.segments.trace_number import TraceNumber as TraceNumberSegment
+from edi_835_parser.segments.reference import Reference as ReferenceSegment
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+logger = logging.getLogger()
 
 
 class Transaction:
@@ -23,11 +28,13 @@ class Transaction:
             self,
             transaction: TransactionSegment = None,
             financial_information: FinancialInformationSegment = None,
+            trace_number: TraceNumberSegment = None,
             claims: List[ClaimLoop] = None,
             organizations: List[OrganizationLoop] = None
     ):
         self.transaction = transaction
         self.financial_information = financial_information
+        self.trace_number = trace_number
         self.claims = claims if claims else []
         self.organizations = organizations if organizations else []
 
@@ -76,6 +83,13 @@ class Transaction:
             assert len(payee) == 1
             return payee[0].organization
 
+    @property
+    def payee_identification(self) -> Optional[ReferenceSegment]:
+            payee_id = [c for c in self.organizations if c.organization.type == 'payee' and c.additional_id]
+            assert len(payee_id) <= 1
+            if len(payee_id) == 1:
+                return payee_id[0].additional_id
+
     @classmethod
     def build(cls, segment: str, segments: Iterator[str]) -> Tuple['Transaction', Optional[Iterator[str]], Optional[str]]:
         transaction = Transaction()
@@ -102,6 +116,11 @@ class Transaction:
                     transaction.financial_information = financial_information
                     segment = None
 
+                elif identifier == TraceNumberSegment.identification:
+                    trace_number = TraceNumberSegment(segment)
+                    transaction.trace_number = trace_number
+                    segment = None
+
 
                 elif identifier in cls.terminating_identifiers:
                     return transaction, segments, segment
@@ -109,7 +128,7 @@ class Transaction:
                 else:
                     segment = None
                     message = f'Identifier: {identifier} not handled in transaction loop.'
-                    warn(message)
+                    logger.warning(message)
 
             except StopIteration:
                 return transaction, None, None

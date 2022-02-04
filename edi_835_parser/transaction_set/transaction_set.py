@@ -26,51 +26,58 @@ class TransactionSet:
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
 
-	def to_dataframe(self) -> tuple[pd.DataFrame]:
-		"""flatten the remittance advice by service to a pandas DataFrame"""
+	def build_remits(self) -> pd.DataFrame:
+		"""flatten the remittance advice by claim to a pandas DataFrame"""
 		remits_df = []
+
+		for transaction in self.transactions:
+			for claim in transaction.claims:
+
+				remits_dict = TransactionSet.serialize_claim(claim, transaction)['remits_dict']
+
+				remits_df.append(remits_dict)
+
+		remits_df = pd.DataFrame(remits_df)
+
+		return remits_df
+
+	def build_remit_payers(self) -> pd.DataFrame:
+		"""flatten the remittance advice payers by claim to a pandas DataFrame"""
 		remit_payers_df = []
 
 		for transaction in self.transactions:
 			for claim in transaction.claims:
-				for service in claim.services:
 
-					remits_dict, remit_payers_dict = TransactionSet.serialize_service(
-						claim,
-						service,
-						transaction
-					)
+				remit_payers_dict = TransactionSet.serialize_claim(claim, transaction)['remit_payers_dict']
 
-				remits_df.append(remits_dict)
 				remit_payers_df.append(remit_payers_dict)
 
-		remits_df = pd.DataFrame(remits_df)
 		remit_payers_df = pd.DataFrame(remit_payers_df)
 
-		return remits_df, remit_payers_df
+		return remit_payers_df
+
+	def build_payment_fin_info(self) -> pd.DataFrame:
+		"""flatten the remittance payment financial info by transaction to a pandas DataFrame"""
+		remit_financial_info_df = []
+
+		for transaction in self.transactions:
+
+			remit_financial_info_dict = TransactionSet.serialize_transaction(transaction)['remit_financial_info_dict']
+
+			remit_financial_info_df.append(remit_financial_info_dict)
+
+		remit_financial_info_df = pd.DataFrame(remit_financial_info_df)
+
+		return remit_financial_info_df
 
 	@staticmethod
-	def serialize_service(
+	def serialize_claim(
 			claim: ClaimLoop,
-			service: ServiceLoop,
 			transaction: TransactionLoop
-	) -> tuple:
-		# # if the service doesn't have a start date assume the service and claim dates match
-		# start_date = None
-		# if service.service_period_start:
-		# 	start_date = service.service_period_start.date
-		# elif claim.claim_statement_period_start:
-		# 	start_date = claim.claim_statement_period_start.date
-		#
-		# # if the service doesn't have an end date assume the service and claim dates match
-		# end_date = None
-		# if service.service_period_end:
-		# 	end_date = service.service_period_end.date
-		# elif claim.claim_statement_period_end:
-		# 	end_date = claim.claim_statement_period_end.date
+	) -> dict[str, dict]:
 
 		remits_dict = {
-			'edi_transacrion_id_st02': transaction.transaction.transaction_set_control_no,
+			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'patient_control_id': claim.claim.patient_control_number,
 			'patient_id_qualifier': claim.patient.identification_code_qualifier,
 			'patient_id': claim.patient.identification_code,
@@ -118,7 +125,7 @@ class TransactionSet:
 		}
 
 		remit_payers_dict = {
-			'edi_transacrion_id_st02': transaction.transaction.transaction_set_control_no,
+			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'payer_id': transaction.payer.identification_code,
 			'payer_name': transaction.payer.name,
 			'payer_address_line1': transaction.payer_address.address_line1,
@@ -127,28 +134,68 @@ class TransactionSet:
 			'payer_state': transaction.payer_location.state,
 			'payer_zip': transaction.payer_location.zip_code,
 			'payer_country': transaction.payer_location.country,
-			'payer_contact_business': transaction.payer_contact_business.communication_no_or_url
-			if transaction.payer_contact_business else None,
-			'payer_contact_business_qualifier': transaction.payer_contact_business.communication_no_or_url_qualifier
-			if transaction.payer_contact_business else None,
-			'payer_contact_business_name': transaction.payer_contact_business.name
-			if transaction.payer_contact_business else None,
-			'payer_contact_web': transaction.payer_contact_web.communication_no_or_url
-			if transaction.payer_contact_web else None,
-			'payer_contact_web_qualifier': transaction.payer_contact_web.communication_no_or_url_qualifier
-			if transaction.payer_contact_web else None,
-			'payer_contact_web_name': transaction.payer_contact_web.name
-			if transaction.payer_contact_web else None
-
+			'payer_contact_business': '',
+			'payer_contact_business_qualifier': '',
+			'payer_contact_business_name': '',
+			'payer_contact_web': '',
+			'payer_contact_web_qualifier': '',
+			'payer_contact_web_name': ''
 
 		}
 
-		remit_payment_info_dict = {
-			'edi_transacrion_id_st02': transaction.transaction.transaction_set_control_no,
+		if transaction.payer_contact_business:
+			remit_payers_dict.update({
+				'payer_contact_business': transaction.payer_contact_business.communication_no_or_url,
+				'payer_contact_business_qualifier': transaction.payer_contact_business.communication_no_or_url_qualifier,
+				'payer_contact_business_name': transaction.payer_contact_business.name,
+			})
+
+		if transaction.payer_contact_web:
+			remit_payers_dict.update({
+				'payer_contact_web': transaction.payer_contact_web.communication_no_or_url,
+				'payer_contact_web_qualifier': transaction.payer_contact_web.communication_no_or_url_qualifier,
+				'payer_contact_web_name': transaction.payer_contact_web.name,
+			})
+
+		return {'remits_dict': remits_dict, 'remit_payers_dict': remit_payers_dict}
+
+	@staticmethod
+	def serialize_transaction(
+			transaction: TransactionLoop
+	) -> dict[str, dict]:
+
+		remit_financial_info_dict = {
+			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'fin_info_receiver_account_number_qualifier': transaction.financial_information.account_no_qualifier,
+			'fin_info_receiver_account_number': transaction.financial_information.receiver_or_provider_acc_no,
+			'fin_info_originating_company_identifier': transaction.financial_information.origin_company_code,
+			'fin_info_transaction_handling_code': transaction.financial_information.transaction_handling_code,
+			'fin_info_total_check_amount': transaction.financial_information.amount_paid,
+			'fin_info_credit_debit_flag': transaction.financial_information.credit_debit_flag,
+			'fin_info_payment_method_code': transaction.financial_information.payment_method,
+			'fin_info_payment_format_code': transaction.financial_information.payment_format,
+			'fin_info_sender_dfi_id_number_qualifier': transaction.financial_information.id_qualifier,
+			'fin_info_sender_dfi_identification_number': transaction.financial_information.id,
+			'fin_info_sender_account_number_qualifier': transaction.financial_information.acc_qualifier,
+			'fin_info_sender_account_number': transaction.financial_information.sender_acc_no,
+			'trace_originating_company_supplemental_code': transaction.trace_number.origin_company_supplemental_code,
+			'fin_info_check_date': transaction.financial_information.transaction_date,
+			'trace_type_code': transaction.trace_number.type_code,
+			'trace_ein_tin': transaction.trace_number.origin_company_identifier,
+			'trace_reference_identification_check_num': transaction.trace_number.ref_identification,
+			'payer_name': transaction.payer.name,
+			'payee_name': transaction.payee.name,
+			'payee_id_qualifier': transaction.payee.identification_code_qualifier,
+			'payee_id': transaction.payee.identification_code,
+			'tax_payee_id_qualifier': transaction.payee_identification.qualifier if transaction.payee_identification else None,
+			'tax_payee_id': transaction.payee_identification.value if transaction.payee_identification else None
 
 		}
 
-		return remits_dict, remit_payers_dict
+		return {'remit_financial_info_dict': remit_financial_info_dict}
+
+
+
 
 	@classmethod
 	def build(cls, file_path: str) -> 'TransactionSet':
