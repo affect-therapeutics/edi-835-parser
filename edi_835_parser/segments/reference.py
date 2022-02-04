@@ -7,7 +7,7 @@ class Reference:
 	identification = 'REF'
 
 	identifier = Identifier()
-	qualifier = ReferenceQualifier()
+	# qualifier = ReferenceQualifier()
 
 	def __init__(self, segment: str):
 		self.segment = segment
