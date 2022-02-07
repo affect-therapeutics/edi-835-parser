@@ -1,8 +1,11 @@
 import os
 from typing import List
-from warnings import warn
+import logging.config
 
 from edi_835_parser.transaction_set.transaction_set import TransactionSet
+
+logging.config.fileConfig(fname='edi_835_parser/logging.conf')
+logger = logging.getLogger()
 
 
 def parse(path: str, debug: bool=False) -> TransactionSet:
@@ -20,7 +23,7 @@ def parse(path: str, debug: bool=False) -> TransactionSet:
 				try:
 					transaction_set = TransactionSet.build(file_path)
 				except:
-					warn(f'Failed to build a transaction set from {file_path}')
+					logger.error(f'Failed to build a transaction set from {file_path}')
 	else:
 		transaction_set = TransactionSet.build(path)
 

@@ -5,7 +5,8 @@ entity_codes = {
 	'QC': 'patient',
 	'74': 'insured',
 	'82': 'rendering provider',
-	'85': 'billing provider'
+	'85': 'billing provider',
+	'IL': 'subscriber'
 }
 
 

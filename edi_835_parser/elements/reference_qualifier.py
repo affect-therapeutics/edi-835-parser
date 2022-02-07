@@ -11,8 +11,13 @@ reference_qualifiers = {
 }
 
 
+# class ReferenceQualifier(Element):
+#
+# 	def parser(self, value: str) -> Code:
+# 		description = reference_qualifiers.get(value, None)
+# 		return Code(value, description)
+
 class ReferenceQualifier(Element):
 
-	def parser(self, value: str) -> Code:
-		description = reference_qualifiers.get(value, None)
-		return Code(value, description)
+	def parser(self, value: str) -> str:
+		return reference_qualifiers.get(value, value)

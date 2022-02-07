@@ -27,6 +27,7 @@ class Entity:
 		self.name_prefix = get_element(segment, 6)
 		self.identification_code_qualifier = get_element(segment, 8)
 		self.identification_code = get_element(segment, 9)
+		self.patient_relationship = get_element(segment, 10)
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())

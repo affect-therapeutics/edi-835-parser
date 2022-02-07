@@ -1,8 +1,10 @@
 from typing import Union
 from datetime import datetime
-from warnings import warn
-
+import logging.config
 from edi_835_parser.elements import Element
+
+logging.config.fileConfig(fname='edi_835_parser/logging.conf')
+logger = logging.getLogger()
 
 
 class Date(Element):
@@ -17,5 +19,5 @@ class Date(Element):
 			return datetime(year, month, day)
 
 		else:
-			warn(f'Unable to parse {value} into a datetime')
+			logger.warning(f'Unable to parse {value} into a datetime')
 			return value

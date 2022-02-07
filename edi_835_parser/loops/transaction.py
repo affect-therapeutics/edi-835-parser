@@ -1,5 +1,5 @@
 from typing import Iterator, Tuple, Optional, List
-import logging
+import logging.config
 
 from edi_835_parser.loops.claim import Claim as ClaimLoop
 from edi_835_parser.loops.organization import Organization as OrganizationLoop
@@ -13,7 +13,8 @@ from edi_835_parser.segments.financial_information import FinancialInformation a
 from edi_835_parser.segments.trace_number import TraceNumber as TraceNumberSegment
 from edi_835_parser.segments.reference import Reference as ReferenceSegment
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+
+logging.config.fileConfig(fname='edi_835_parser/logging.conf')
 logger = logging.getLogger()
 
 
@@ -120,7 +121,6 @@ class Transaction:
                     trace_number = TraceNumberSegment(segment)
                     transaction.trace_number = trace_number
                     segment = None
-
 
                 elif identifier in cls.terminating_identifiers:
                     return transaction, segments, segment
