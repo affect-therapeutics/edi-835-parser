@@ -1,5 +1,5 @@
 from typing import Iterator, Tuple, Optional, List
-import logging
+import logging.config
 
 
 from edi_835_parser.segments.organization import Organization as OrganizationSegment
@@ -11,7 +11,7 @@ from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.utilities import find_identifier
 
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+logging.config.fileConfig(fname='edi_835_parser/logging.conf')
 logger = logging.getLogger()
 
 

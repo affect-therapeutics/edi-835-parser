@@ -17,6 +17,7 @@ class Date:
 
 		self.identifier = segment[0]
 		self.qualifier = segment[1]
+		self.qualifier_code = segment[1]
 		self.date = segment[2]
 
 	def __repr__(self):
