@@ -123,6 +123,20 @@ class TransactionSet:
 
 		return remit_adjustments_data
 
+	def build_remit_remarks_adjudications(self) -> pd.DataFrame:
+		"""flatten the remittance advice by inpatient/outpatient adjudication info to a pandas DataFrame"""
+
+		logger.info("Building remit_remarks_adjudications DataFrame")
+		remit_remarks_adjudications_data = []
+
+		for transaction in self.transactions:
+			for claim in transaction.claims:
+				remit_remarks_adjudications_dict = TransactionSet.serialize_claim(claim, transaction)['remit_remarks_adjudications_dict']
+				remit_remarks_adjudications_data.append(remit_remarks_adjudications_dict)
+		remit_remarks_adjudications_data = pd.DataFrame(remit_remarks_adjudications_data,
+														columns=remit_remarks_adjudications_data[0].keys())
+		return remit_remarks_adjudications_data
+
 	@staticmethod
 	def serialize_claim(
 			claim: ClaimLoop,
@@ -261,7 +275,92 @@ class TransactionSet:
 				'payer_contact_web_name': transaction.payer_contact_web.name,
 			})
 
-		return {'remits_dict': remits_dict, 'remit_payers_dict': remit_payers_dict}
+		remit_remarks_adjudications_dict = {
+			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'MIA_covered_days_visits_count': None,
+			'MIA_pps_operating_outlier_amount': None,
+			'MIA_lifetime_psychiatric_days_count': None,
+			'MIA_claim_drg_amount': None,
+			'MIA_claim_payment_remark_code': None,
+			'MIA_claim_disproportionate_share_amount': None,
+			'MIA_claim_msp_pass_though_amount': None,
+			'MIA_claim_pps_capital_amount': None,
+			'MIA_pps_capital_fsp_drg_amount': None,
+			'MIA_pps_capital_hsp_drg_amount': None,
+			'MIA_pps_capital_dsh_drg_amount': None,
+			'MIA_old_capital_amount': None,
+			'MIA_pps_capital_ime_amount': None,
+			'MIA_pps_operating_hospital_specific_drg_amount': None,
+			'MIA_cost_report_day_count': None,
+			'MIA_pps_operating_federal_specific_drg_amount': None,
+			'MIA_claim_pps_capital_outlier_amount': None,
+			'MIA_claim_indirect_teaching_amount': None,
+			'MIA_non_payable_professional_component_amount': None,
+			'MIA_claim_remark_code1': None,
+			'MIA_claim_remark_code2': None,
+			'MIA_claim_remark_code3': None,
+			'MIA_claim_remark_code4': None,
+			'MIA_pps_capital_exception_amount': None,
+			'MOA_reimbursement_rate': None,
+			'MOA_claim_hcpcs_payment_amount': None,
+			'MOA_claim_remark_code1': None,
+			'MOA_claim_remark_code2': None,
+			'MOA_claim_remark_code3': None,
+			'MOA_claim_remark_code4': None,
+			'MOA_claim_remark_code5': None,
+			'MOA_claim_esrd_payment_amount': None,
+			'MOA_non_payable_professional_component_amount': None,
+			'created_at': None
+
+		}
+
+		if claim.inpatient:
+			remit_remarks_adjudications_dict.update({
+				'MIA_covered_days_visits_count': claim.inpatient.covered_days_visits_count,
+				'MIA_pps_operating_outlier_amount': claim.inpatient.pps_operating_outlier_amount,
+				'MIA_lifetime_psychiatric_days_count': claim.inpatient.lifetime_psychiatric_days_count,
+				'MIA_claim_drg_amount': claim.inpatient.claim_drg_amount,
+				'MIA_claim_payment_remark_code': claim.inpatient.claim_payment_remark_code,
+				'MIA_claim_disproportionate_share_amount': claim.inpatient.claim_disproportionate_share_amount,
+				'MIA_claim_msp_pass_though_amount': claim.inpatient.claim_msp_pass_though_amount,
+				'MIA_claim_pps_capital_amount': claim.inpatient.claim_pps_capital_amount,
+				'MIA_pps_capital_fsp_drg_amount': claim.inpatient.pps_capital_fsp_drg_amount,
+				'MIA_pps_capital_hsp_drg_amount': claim.inpatient.pps_capital_hsp_drg_amount,
+				'MIA_pps_capital_dsh_drg_amount': claim.inpatient.pps_capital_dsh_drg_amount,
+				'MIA_old_capital_amount': claim.inpatient.old_capital_amount,
+				'MIA_pps_capital_ime_amount': claim.inpatient.pps_capital_ime_amount,
+				'MIA_pps_operating_hospital_specific_drg_amount': claim.inpatient.pps_operating_hospital_specific_drg_amount,
+				'MIA_cost_report_day_count': claim.inpatient.cost_report_day_count,
+				'MIA_pps_operating_federal_specific_drg_amount': claim.inpatient.pps_operating_federal_specific_drg_amount,
+				'MIA_claim_pps_capital_outlier_amount': claim.inpatient.claim_pps_capital_outlier_amount,
+				'MIA_claim_indirect_teaching_amount': claim.inpatient.claim_indirect_teaching_amount,
+				'MIA_non_payable_professional_component_amount': claim.inpatient.non_payable_professional_component_amount,
+				'MIA_claim_remark_code1': claim.inpatient.remark_code1,
+				'MIA_claim_remark_code2': claim.inpatient.remark_code2,
+				'MIA_claim_remark_code3': claim.inpatient.remark_code3,
+				'MIA_claim_remark_code4': claim.inpatient.remark_code4,
+				# 'MIA_pps_capital_exception_amount': claim.inpatient., no mapping info available at the moment
+
+			})
+
+		if claim.outpatient:
+			remit_remarks_adjudications_dict.update({
+				# 'MOA_reimbursement_rate': no mapping info available,
+				# 'MOA_claim_hcpcs_payment_amount': no mapping info available,
+				'MOA_claim_remark_code1': claim.outpatient.remark_code1,
+				'MOA_claim_remark_code2': claim.outpatient.remark_code2,
+				'MOA_claim_remark_code3': claim.outpatient.remark_code3,
+				'MOA_claim_remark_code4': claim.outpatient.remark_code4,
+				'MOA_claim_remark_code5': claim.outpatient.remark_code5,
+				'MOA_claim_esrd_payment_amount': claim.outpatient.claim_esrd_payment_amount,
+				'MOA_non_payable_professional_component_amount': claim.outpatient.
+				non_payable_professional_component_amount
+
+
+			})
+
+		return {'remits_dict': remits_dict, 'remit_payers_dict': remit_payers_dict,
+					'remit_remarks_adjudications_dict': remit_remarks_adjudications_dict}
 
 	@staticmethod
 	def serialize_transaction(
@@ -298,7 +397,6 @@ class TransactionSet:
 		}
 
 		return {'remit_financial_info_dict': remit_financial_info_dict}
-
 
 	@staticmethod
 	def serialize_service(

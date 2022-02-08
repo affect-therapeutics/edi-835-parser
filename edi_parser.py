@@ -38,5 +38,11 @@ for file in files:
 	logger.info("Writing remit_adjustments DataFrame to CSV")
 	remit_adjustments_df.to_csv(f'{output_dir}/{file_name}_remit_adjustments.{file_extension}', sep='|', index=False)
 
+	remit_remarks_adjudications_df = transaction_set.build_remit_remarks_adjudications()
+	logger.info("Writing remit_remarks_adjudications_df to CSV")
+	remit_remarks_adjudications_df.to_csv(f'{output_dir}/{file_name}_remit_remarks_adjudications.{file_extension}',
+											sep='|', index=False)
+
+
 
 
