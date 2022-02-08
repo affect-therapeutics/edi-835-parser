@@ -10,6 +10,7 @@ from edi_835_parser.loops.service import Service as ServiceLoop
 from edi_835_parser.loops.organization import Organization as OrganizationLoop
 from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.interchange import Interchange as InterchangeSegment
+from edi_835_parser.segments.service_adjustment import ServiceAdjustment as ServiceAdjustmentSegment
 
 logging.config.fileConfig(fname='edi_835_parser/logging.conf')
 logger = logging.getLogger()
@@ -93,15 +94,34 @@ class TransactionSet:
 		for transaction in self.transactions:
 			for claim in transaction.claims:
 				for service in claim.services:
-					# if service.service_identification and service.service_identification.qualifier == '6R':
 
-					remit_service_lines_dict = TransactionSet.serialize_service(transaction, claim, service)['remit_service_lines_dict']
+					remit_service_lines_dict = TransactionSet.serialize_service(
+						transaction, claim, service)['remit_service_lines_dict']
 
 					remit_service_lines_df.append(remit_service_lines_dict)
 
 		remit_service_lines_df = pd.DataFrame(remit_service_lines_df, columns=remit_service_lines_df[0].keys())
 
 		return remit_service_lines_df
+
+	def build_remit_adjustments(self) -> pd.DataFrame:
+		"""flatten the remittance advice by service lines to a pandas DataFrame"""
+
+		logger.info("Building remit_adjustments DataFrame")
+		remit_adjustments_data = []
+
+		for transaction in self.transactions:
+			for claim in transaction.claims:
+				for service in claim.services:
+					for adjustment in service.adjustments:
+						remit_adjustments_dict = TransactionSet.serialize_adjustment(
+							transaction, adjustment)['remit_adjustments_dict']
+
+						remit_adjustments_data.append(remit_adjustments_dict)
+
+		remit_adjustments_data = pd.DataFrame(remit_adjustments_data, columns=remit_adjustments_data[0].keys())
+
+		return remit_adjustments_data
 
 	@staticmethod
 	def serialize_claim(
@@ -157,9 +177,12 @@ class TransactionSet:
 			'corrected_insured_suffix': None,
 			'corrected_insured_id_qualifier': None,
 			'corrected_insured_id': None,
-			'claim_statement_period_start': claim.claim_statement_period_start.date if claim.claim_statement_period_start else None,
-			'claim_statement_period_end': claim.claim_statement_period_end.date if claim.claim_statement_period_end else None,
-			'claim_coverage_expiration': claim.claim_coverage_expiration.date if claim.claim_coverage_expiration else None,
+			'claim_statement_period_start': claim.claim_statement_period_start.date
+			if claim.claim_statement_period_start else None,
+			'claim_statement_period_end': claim.claim_statement_period_end.date
+			if claim.claim_statement_period_end else None,
+			'claim_coverage_expiration': claim.claim_coverage_expiration.date
+			if claim.claim_coverage_expiration else None,
 			'claim_coverage_amount': claim.amount.amount,
 			'claim_contract_code': claim.claim_contract_code.value if claim.claim_contract_code else None,
 			'created_at': None
@@ -329,6 +352,38 @@ class TransactionSet:
 
 		return {'remit_service_lines_dict': remit_service_lines_dict}
 
+	@staticmethod
+	def serialize_adjustment(
+			transaction: TransactionLoop,
+			# claim: ClaimLoop,
+			# service: ServiceLoop,
+			adjustment: ServiceAdjustmentSegment
+	) -> dict[str, dict]:
+
+		remit_adjustments_dict = {
+			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'adjustment_group_code': adjustment.group_code,
+			'adjustment_reason_code': adjustment.reason_code,
+			'adjustment_amount': adjustment.amount,
+			'adjustment_quantity': adjustment.quantity,
+			'adjustment_reason_code2': adjustment.reason_code2,
+			'adjustment_amount2': adjustment.amount2,
+			'adjustment_quantity2': adjustment.quantity2,
+			'adjustment_reason_code3': adjustment.reason_code3,
+			'adjustment_amount3': adjustment.amount3,
+			'adjustment_quantity3': adjustment.quantity3,
+			'adjustment_reason_code4': adjustment.reason_code4,
+			'adjustment_amount4': adjustment.amount4,
+			'adjustment_quantity4': adjustment.quantity4,
+			'adjustment_reason_code5': adjustment.reason_code5,
+			'adjustment_amount5': adjustment.amount5,
+			'adjustment_quantity5': adjustment.quantity5,
+			'adjustment_reason_code6': adjustment.reason_code6,
+			'adjustment_amount6': adjustment.amount6,
+			'adjustment_quantity6': adjustment.quantity6,
+
+		}
+		return {'remit_adjustments_dict': remit_adjustments_dict }
 
 	@classmethod
 	def build(cls, file_path: str) -> 'TransactionSet':

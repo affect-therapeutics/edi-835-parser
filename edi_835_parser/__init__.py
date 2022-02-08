@@ -14,7 +14,7 @@ def parse(path: str, debug: bool=False) -> TransactionSet:
 
 	if os.path.isdir(path):
 		transaction_set = None
-		files = _find_edi_835_files(path)
+		files = find_edi_835_files(path)
 		for file in files:
 			file_path = f'{path}/{file}'
 			if debug:
@@ -30,7 +30,7 @@ def parse(path: str, debug: bool=False) -> TransactionSet:
 	return transaction_set
 
 
-def _find_edi_835_files(path: str) -> List[str]:
+def find_edi_835_files(path: str) -> List[str]:
 	files = []
 	for file in os.listdir(path):
 		if file.endswith('.txt'):
