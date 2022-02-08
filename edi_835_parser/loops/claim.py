@@ -7,7 +7,10 @@ from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.date import Date as DateSegment
 from edi_835_parser.segments.amount import Amount as AmountSegment
 from edi_835_parser.segments.utilities import find_identifier
+from edi_835_parser.segments.inpatient_adjudication import InpatientAdjudication as InpatientAdjudicationSegment
+from edi_835_parser.segments.outpatient_adjudication import OutpatientAdjudication as OutpatientAdjudicationSegment
 from edi_835_parser.loops.service import Service as ServiceLoop
+
 
 logging.config.fileConfig(fname='edi_835_parser/logging.conf')
 logger = logging.getLogger()
@@ -28,6 +31,8 @@ class Claim:
 			references: List[ReferenceSegment] = None,
 			dates: List[DateSegment] = None,
 			amount: AmountSegment = None,
+			inpatient: InpatientAdjudicationSegment = None,
+			outpatient: OutpatientAdjudicationSegment = None
 	):
 		self.claim = claim
 		self.entities = entities if entities else []
@@ -35,6 +40,8 @@ class Claim:
 		self.references = references if references else []
 		self.dates = dates if dates else []
 		self.amount = amount
+		self.inpatient = inpatient
+		self.outpatient = outpatient
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
@@ -149,6 +156,16 @@ class Claim:
 				elif identifier == AmountSegment.identification:
 					amount = AmountSegment(segment)
 					claim.amount = amount
+					segment = None
+
+				elif identifier == InpatientAdjudicationSegment.identification:
+					inpatient = InpatientAdjudicationSegment(segment)
+					claim.inpatient = inpatient
+					segment = None
+
+				elif identifier == OutpatientAdjudicationSegment.identification:
+					outpatient = OutpatientAdjudicationSegment(segment)
+					claim.outpatient = outpatient
 					segment = None
 
 				elif identifier in cls.terminating_identifiers:
