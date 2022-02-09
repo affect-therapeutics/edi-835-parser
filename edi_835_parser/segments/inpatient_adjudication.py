@@ -1,4 +1,5 @@
 from edi_835_parser.elements.identifier import Identifier
+from edi_835_parser.elements.dollars import Dollars
 from edi_835_parser.segments.utilities import split_segment, get_element
 
 
@@ -6,6 +7,16 @@ class InpatientAdjudication:
 	identification = 'MIA'
 
 	identifier = Identifier()
+	pps_operating_outlier_amount = Dollars()
+	claim_drg_amount = Dollars()
+	claim_disproportionate_share_amount = Dollars()
+	claim_msp_pass_though_amount = Dollars()
+	claim_pps_capital_amount = Dollars()
+	pps_capital_ime_amount = Dollars()
+	pps_operating_federal_specific_drg_amount = Dollars()
+	claim_pps_capital_outlier_amount = Dollars()
+	claim_indirect_teaching_amount = Dollars()
+	non_payable_professional_component_amount = Dollars()
 
 	def __init__(self, segment: str):
 		self.segment = segment

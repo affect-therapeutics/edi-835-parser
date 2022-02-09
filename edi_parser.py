@@ -43,6 +43,11 @@ for file in files:
 	remit_remarks_adjudications_df.to_csv(f'{output_dir}/{file_name}_remit_remarks_adjudications.{file_extension}',
 											sep='|', index=False)
 
+	provider_adjustments_df = transaction_set.build_provider_adjustments()
+	logger.info("Writing provider_adjustments_df to CSV")
+	provider_adjustments_df.to_csv(f'{output_dir}/{file_name}_provider_adjustments.{file_extension}',
+											sep='|', index=False)
+
 
 
 
