@@ -137,6 +137,21 @@ class TransactionSet:
 														columns=remit_remarks_adjudications_data[0].keys())
 		return remit_remarks_adjudications_data
 
+	def build_provider_adjustments(self) -> pd.DataFrame:
+		"""flatten the remittance advice by provider adjustment info to a pandas DataFrame"""
+
+		logger.info("Building provider_adjustments DataFrame")
+		provider_adjustments_data = []
+
+		for transaction in self.transactions:
+			provider_adjustment_dict = TransactionSet.serialize_transaction(transaction)['provider_adjustment_dict']
+			provider_adjustments_data.append(provider_adjustment_dict)
+
+		provider_adjustments_data = pd.DataFrame(provider_adjustments_data, columns=provider_adjustments_data[0].keys())
+
+		return provider_adjustments_data
+
+
 	@staticmethod
 	def serialize_claim(
 			claim: ClaimLoop,
@@ -396,7 +411,62 @@ class TransactionSet:
 
 		}
 
-		return {'remit_financial_info_dict': remit_financial_info_dict}
+		provider_adjustment_dict = {
+			'provider_id': None,
+			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'fiscal_period_date': None,
+			'provider_adjustment_reason_code1': None,
+			'provider_adjustment_id1': None,
+			'provider_adjustment_amount1': None,
+			'provider_adjustment_reason_code2': None,
+			'provider_adjustment_id2': None,
+			'provider_adjustment_amount2': None,
+			'provider_adjustment_reason_code3': None,
+			'provider_adjustment_id3': None,
+			'provider_adjustment_amount3': None,
+			'provider_adjustment_reason_code4': None,
+			'provider_adjustment_id4': None,
+			'provider_adjustment_amount4': None,
+			'provider_adjustment_reason_code5': None,
+			'provider_adjustment_id5': None,
+			'provider_adjustment_amount5': None,
+			'provider_adjustment_reason_code6': None,
+			'provider_adjustment_id6': None,
+			'provider_adjustment_amount6': None,
+			'created_at': None
+
+		}
+
+		if transaction.provider_adjustment:
+			provider_adjustment_dict.update({
+				'provider_id': transaction.provider_adjustment.provider_id,
+				'fiscal_period_date': transaction.provider_adjustment.fiscal_period_date,
+				'provider_adjustment_reason_code1': transaction.provider_adjustment.reason_code1,
+				'provider_adjustment_id1': transaction.provider_adjustment.id1,
+				'provider_adjustment_amount1': transaction.provider_adjustment.amount1,
+				'provider_adjustment_reason_code2': transaction.provider_adjustment.reason_code2,
+				'provider_adjustment_id2': transaction.provider_adjustment.id2,
+				'provider_adjustment_amount2': transaction.provider_adjustment.amount2,
+				'provider_adjustment_reason_code3': transaction.provider_adjustment.reason_code3,
+				'provider_adjustment_id3': transaction.provider_adjustment.id3,
+				'provider_adjustment_amount3': transaction.provider_adjustment.amount3,
+				'provider_adjustment_reason_code4': transaction.provider_adjustment.reason_code4,
+				'provider_adjustment_id4': transaction.provider_adjustment.id4,
+				'provider_adjustment_amount4': transaction.provider_adjustment.amount4,
+				'provider_adjustment_reason_code5': transaction.provider_adjustment.reason_code5,
+				'provider_adjustment_id5': transaction.provider_adjustment.id5,
+				'provider_adjustment_amount5': transaction.provider_adjustment.amount5,
+				'provider_adjustment_reason_code6': transaction.provider_adjustment.reason_code6,
+				'provider_adjustment_id6': transaction.provider_adjustment.id6,
+				'provider_adjustment_amount6': transaction.provider_adjustment.amount6
+
+
+			})
+
+		return {'remit_financial_info_dict': remit_financial_info_dict,
+										'provider_adjustment_dict': provider_adjustment_dict}
+
+
 
 	@staticmethod
 	def serialize_service(

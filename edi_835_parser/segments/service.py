@@ -1,7 +1,7 @@
 from edi_835_parser.elements.identifier import Identifier
 from edi_835_parser.elements.dollars import Dollars
 from edi_835_parser.elements.service_code import ServiceCode
-from edi_835_parser.elements.service_qualifier import ServiceQualifer
+from edi_835_parser.elements.service_qualifier import ServiceQualifier
 from edi_835_parser.elements.service_modifier1 import ServiceModifier1
 from edi_835_parser.elements.service_modifier2 import ServiceModifier2
 from edi_835_parser.elements.service_modifier3 import ServiceModifier3
@@ -19,8 +19,8 @@ class Service:
 	paid_amount = Dollars()
 	code = ServiceCode()
 	procedure_code = ServiceCode()
-	qualifier = ServiceQualifer()
-	product_qualifier = ServiceQualifer()
+	qualifier = ServiceQualifier()
+	product_qualifier = ServiceQualifier()
 	modifier1 = ServiceModifier1()
 	modifier2 = ServiceModifier2()
 	modifier3 = ServiceModifier3()

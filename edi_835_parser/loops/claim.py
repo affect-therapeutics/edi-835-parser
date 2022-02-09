@@ -9,6 +9,7 @@ from edi_835_parser.segments.amount import Amount as AmountSegment
 from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.inpatient_adjudication import InpatientAdjudication as InpatientAdjudicationSegment
 from edi_835_parser.segments.outpatient_adjudication import OutpatientAdjudication as OutpatientAdjudicationSegment
+from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 from edi_835_parser.loops.service import Service as ServiceLoop
 
 
@@ -19,7 +20,7 @@ logger = logging.getLogger()
 class Claim:
 	initiating_identifier = ClaimSegment.identification
 	terminating_identifiers = [
-		ClaimSegment.identification,
+		ClaimSegment.identification, ProviderAdjustmentSegment.identification,
 		'SE'
 	]
 

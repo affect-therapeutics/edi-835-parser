@@ -12,6 +12,7 @@ from edi_835_parser.segments.payer_contact import PayerContact as PayerContactSe
 from edi_835_parser.segments.financial_information import FinancialInformation as FinancialInformationSegment
 from edi_835_parser.segments.trace_number import TraceNumber as TraceNumberSegment
 from edi_835_parser.segments.reference import Reference as ReferenceSegment
+from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 
 
 logging.config.fileConfig(fname='edi_835_parser/logging.conf')
@@ -30,12 +31,14 @@ class Transaction:
             transaction: TransactionSegment = None,
             financial_information: FinancialInformationSegment = None,
             trace_number: TraceNumberSegment = None,
+            provider_adjustment: ProviderAdjustmentSegment = None,
             claims: List[ClaimLoop] = None,
             organizations: List[OrganizationLoop] = None
     ):
         self.transaction = transaction
         self.financial_information = financial_information
         self.trace_number = trace_number
+        self.provider_adjustment = provider_adjustment
         self.claims = claims if claims else []
         self.organizations = organizations if organizations else []
 
@@ -120,6 +123,11 @@ class Transaction:
                 elif identifier == TraceNumberSegment.identification:
                     trace_number = TraceNumberSegment(segment)
                     transaction.trace_number = trace_number
+                    segment = None
+
+                elif identifier == ProviderAdjustmentSegment.identification:
+                    provider_adjustment = ProviderAdjustmentSegment(segment)
+                    transaction.provider_adjustment = provider_adjustment
                     segment = None
 
                 elif identifier in cls.terminating_identifiers:

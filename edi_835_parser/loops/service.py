@@ -9,6 +9,7 @@ from edi_835_parser.segments.amount import Amount as AmountSegment
 from edi_835_parser.segments.service_adjustment import ServiceAdjustment as ServiceAdjustmentSegment
 from edi_835_parser.segments.remark import Remark as RemarkSegment
 from edi_835_parser.segments.utilities import find_identifier
+from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 from edi_835_parser.elements.dollars import Dollars
 
 logging.config.fileConfig(fname='edi_835_parser/logging.conf')
@@ -19,7 +20,7 @@ class Service:
 	initiating_identifier = ServiceSegment.identification
 	terminating_identifiers = [
 		ServiceSegment.identification,
-		ClaimSegment.identification,
+		ClaimSegment.identification, ProviderAdjustmentSegment.identification,
 		'SE'
 	]
 
