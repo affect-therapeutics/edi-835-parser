@@ -85,6 +85,16 @@ class Service:
 		if len(service_id) == 1:
 			return service_id[0]
 
+	@property
+	def rendering_provider(self) -> Optional[ReferenceSegment]:
+		rendering_provider_qualifier = ['OB', '1A', '1B', '1C', '1D', '1G', '1H', '1J', 'D3', 'G2', 'HPI', 'SY']
+		rendering_provider = [r for r in self.references if r.qualifier in rendering_provider_qualifier]
+		assert len(rendering_provider) <= 1
+
+		if len(rendering_provider) == 1:
+			return rendering_provider[0]
+
+
 
 	@classmethod
 	def build(cls, segment: str, segments: Iterator[str]) -> Tuple['Service', Optional[str], Optional[Iterator[str]]]:

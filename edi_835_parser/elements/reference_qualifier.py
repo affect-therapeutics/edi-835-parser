@@ -7,7 +7,20 @@ reference_qualifiers = {
 	'0K': 'policy form identifying number',
 	'PQ': 'payee identification',
 	'TJ': 'federal taxpayer identification number',
-	'LU': 'location number'
+	'LU': 'location number',
+	'OB': 'State License Number',
+	'1A': 'Blue Cross Provider Number',
+	'1B':  'Blue Shield Provider Number',
+	'1C': 'Medicare Provider Number',
+	'1D': 'Medicaid Provider Number',
+	'1G': 'Provider Number UPIN Number',
+	'1H': 'CHAMPUS Identification Number',
+	'1J':  'Facility ID Number',
+	'D3': 'National Council for Prescription Drug Programs Pharmacy Number',
+	'G2': 'Provider Commerical Number',
+	'HPI': 'Centers for Medicare and Medicaid Services National Provider Identifier',
+	'SY': 'Social Security Number'
+
 }
 
 

@@ -48,6 +48,20 @@ for file in files:
 	provider_adjustments_df.to_csv(f'{output_dir}/{file_name}_provider_adjustments.{file_extension}',
 											sep='|', index=False)
 
+	service_line_adjustment_df = transaction_set.build_service_line_adjustments()
+	logger.info("Writing service_line_adjustment_df to CSV")
+	service_line_adjustment_df.to_csv(f'{output_dir}/{file_name}_service_line_adjustments.{file_extension}',
+											sep='|', index=False)
+
+	service_line_remarks_df = transaction_set.build_service_line_remarks()
+	logger.info("Writing service_line_remarks_df to CSV")
+	service_line_remarks_df.to_csv(f'{output_dir}/{file_name}_service_line_remarks.{file_extension}',
+											sep='|', index=False)
+
+	service_line_rendering_providers_df = transaction_set.build_service_line_rendering_providers()
+	logger.info("Writing service_line_rendering_providers_df to CSV")
+	service_line_rendering_providers_df.to_csv(f'{output_dir}/{file_name}_service_line_rendering_providers.{file_extension}',
+											sep='|', index=False)
 
 
 
