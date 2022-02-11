@@ -1,5 +1,4 @@
 from typing import Tuple, Iterator, Optional, List
-import logging.config
 
 from edi_835_parser.segments.service import Service as ServiceSegment
 from edi_835_parser.segments.claim import Claim as ClaimSegment
@@ -12,8 +11,7 @@ from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 from edi_835_parser.elements.dollars import Dollars
 
-logging.config.fileConfig(fname='edi_835_parser/logging.conf')
-logger = logging.getLogger()
+from log_conf import Logger
 
 
 class Service:
@@ -129,7 +127,7 @@ class Service:
 
 				else:
 					message = f'Identifier: {identifier} not handled in service loop.'
-					logging.warning(message)
+					Logger.logr.warning(message)
 
 			except StopIteration:
 				return service, None, None

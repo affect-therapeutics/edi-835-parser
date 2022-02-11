@@ -1,5 +1,4 @@
 from typing import Iterator, Tuple, Optional, List
-import logging.config
 
 
 from edi_835_parser.segments.organization import Organization as OrganizationSegment
@@ -10,9 +9,7 @@ from edi_835_parser.segments.payer_contact import PayerContact as PayerContactSe
 from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.utilities import find_identifier
 
-
-logging.config.fileConfig(fname='edi_835_parser/logging.conf')
-logger = logging.getLogger()
+from log_conf import Logger
 
 
 class Organization:
@@ -75,7 +72,7 @@ class Organization:
 				else:
 					segment = None
 					message = f'Identifier: {identifier} not handled in organization loop.'
-					logger.warning(message)
+					Logger.logr.warning(message)
 
 			except StopIteration:
 				return organization, None, None

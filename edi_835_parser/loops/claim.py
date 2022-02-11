@@ -1,5 +1,4 @@
 from typing import Iterator, Tuple, Optional, List
-import logging.config
 
 from edi_835_parser.segments.claim import Claim as ClaimSegment
 from edi_835_parser.segments.entity import Entity as EntitySegment
@@ -13,8 +12,7 @@ from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as Pr
 from edi_835_parser.loops.service import Service as ServiceLoop
 
 
-logging.config.fileConfig(fname='edi_835_parser/logging.conf')
-logger = logging.getLogger()
+from log_conf import Logger
 
 
 class Claim:
@@ -175,7 +173,7 @@ class Claim:
 				else:
 					segment = None
 					message = f'Identifier: {identifier} not handled in claim loop.'
-					logger.warning(message)
+					Logger.logr.warning(message)
 
 			except StopIteration:
 				return claim, None, None
