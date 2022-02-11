@@ -1,0 +1,13 @@
+file_name|edi_transaction_id_st02|claim_service_line_id|remark_code_list_qualifier|remark_code|created_at
+sample_835.txt|1002|UMG10063282686-1|||
+sample_835.txt|1002|UMG10063438092-1|HE|code1|
+sample_835.txt|1001||||
+sample_835.txt|1001||||
+sample_835.txt|1001||||
+sample_835.txt|1001||||
+sample_835.txt|1001||||
+sample_835.txt|1001|UMP10063279654-1|||
+sample_835.txt|1001|UMP10063279654-2|||
+sample_835.txt|1001|UMP10063279654-3|||
+sample_835.txt|1001|UMP10063743914-1|||
+sample_835.txt|1001|UMP10063743920-1|HE|code2|

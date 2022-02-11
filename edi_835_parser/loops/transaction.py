@@ -1,5 +1,4 @@
 from typing import Iterator, Tuple, Optional, List
-import logging.config
 
 from edi_835_parser.loops.claim import Claim as ClaimLoop
 from edi_835_parser.loops.organization import Organization as OrganizationLoop
@@ -14,9 +13,7 @@ from edi_835_parser.segments.trace_number import TraceNumber as TraceNumberSegme
 from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 
-
-logging.config.fileConfig(fname='edi_835_parser/logging.conf')
-logger = logging.getLogger()
+from log_conf import Logger
 
 
 class Transaction:
@@ -136,7 +133,7 @@ class Transaction:
                 else:
                     segment = None
                     message = f'Identifier: {identifier} not handled in transaction loop.'
-                    logger.warning(message)
+                    Logger.logr.warning(message)
 
             except StopIteration:
                 return transaction, None, None

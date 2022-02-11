@@ -1,5 +1,4 @@
 from typing import Tuple, Iterator, Optional, List
-import logging.config
 
 from edi_835_parser.segments.service import Service as ServiceSegment
 from edi_835_parser.segments.claim import Claim as ClaimSegment
@@ -12,8 +11,7 @@ from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 from edi_835_parser.elements.dollars import Dollars
 
-logging.config.fileConfig(fname='edi_835_parser/logging.conf')
-logger = logging.getLogger()
+from log_conf import Logger
 
 
 class Service:
@@ -85,6 +83,16 @@ class Service:
 		if len(service_id) == 1:
 			return service_id[0]
 
+	@property
+	def rendering_provider(self) -> Optional[ReferenceSegment]:
+		rendering_provider_qualifier = ['OB', '1A', '1B', '1C', '1D', '1G', '1H', '1J', 'D3', 'G2', 'HPI', 'SY']
+		rendering_provider = [r for r in self.references if r.qualifier in rendering_provider_qualifier]
+		assert len(rendering_provider) <= 1
+
+		if len(rendering_provider) == 1:
+			return rendering_provider[0]
+
+
 
 	@classmethod
 	def build(cls, segment: str, segments: Iterator[str]) -> Tuple['Service', Optional[str], Optional[Iterator[str]]]:
@@ -119,7 +127,7 @@ class Service:
 
 				else:
 					message = f'Identifier: {identifier} not handled in service loop.'
-					logging.warning(message)
+					Logger.logr.warning(message)
 
 			except StopIteration:
 				return service, None, None

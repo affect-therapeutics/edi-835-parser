@@ -1,6 +1,5 @@
 from typing import List, Iterator, Optional
 from collections import namedtuple
-import logging.config
 
 import pandas as pd
 
@@ -12,9 +11,7 @@ from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.interchange import Interchange as InterchangeSegment
 from edi_835_parser.segments.service_adjustment import ServiceAdjustment as ServiceAdjustmentSegment
 
-logging.config.fileConfig(fname='edi_835_parser/logging.conf')
-logger = logging.getLogger()
-
+from log_conf import Logger
 
 BuildAttributeResponse = namedtuple('BuildAttributeResponse', 'key value segment segments')
 
@@ -35,7 +32,7 @@ class TransactionSet:
 	def build_remits(self) -> pd.DataFrame:
 		"""flatten the remittance advice by claim to a pandas DataFrame"""
 
-		logger.info("Building remits DataFrame")
+		Logger.logr.info("Building remits DataFrame")
 
 		remits_df = []
 
@@ -53,7 +50,7 @@ class TransactionSet:
 	def build_remit_payers(self) -> pd.DataFrame:
 		"""flatten the remittance advice payers by claim to a pandas DataFrame"""
 
-		logger.info("Building remits_payers DataFrame")
+		Logger.logr.info("Building remits_payers DataFrame")
 
 		remit_payers_df = []
 
@@ -71,7 +68,7 @@ class TransactionSet:
 	def build_payment_fin_info(self) -> pd.DataFrame:
 		"""flatten the remittance payment financial info by transaction to a pandas DataFrame"""
 
-		logger.info("Building payment_fin_info DataFrame")
+		Logger.logr.info("Building payment_fin_info DataFrame")
 
 		remit_financial_info_df = []
 
@@ -88,7 +85,7 @@ class TransactionSet:
 	def build_remit_service_lines(self) -> pd.DataFrame:
 		"""flatten the remittance advice by service lines to a pandas DataFrame"""
 
-		logger.info("Building remit_service_lines DataFrame")
+		Logger.logr.info("Building remit_service_lines DataFrame")
 		remit_service_lines_df = []
 
 		for transaction in self.transactions:
@@ -107,7 +104,7 @@ class TransactionSet:
 	def build_remit_adjustments(self) -> pd.DataFrame:
 		"""flatten the remittance advice by service lines to a pandas DataFrame"""
 
-		logger.info("Building remit_adjustments DataFrame")
+		Logger.logr.info("Building remit_adjustments DataFrame")
 		remit_adjustments_data = []
 
 		for transaction in self.transactions:
@@ -115,7 +112,7 @@ class TransactionSet:
 				for service in claim.services:
 					for adjustment in service.adjustments:
 						remit_adjustments_dict = TransactionSet.serialize_adjustment(
-							transaction, adjustment)['remit_adjustments_dict']
+							transaction, service, adjustment)['remit_adjustments_dict']
 
 						remit_adjustments_data.append(remit_adjustments_dict)
 
@@ -123,10 +120,75 @@ class TransactionSet:
 
 		return remit_adjustments_data
 
+	def build_service_line_adjustments(self) -> pd.DataFrame:
+		"""flatten the remittance advice by service lines adjustments to a pandas DataFrame"""
+
+		Logger.logr.info("Building remit_adjustments DataFrame")
+		service_line_adjustments_data = []
+
+		for transaction in self.transactions:
+			for claim in transaction.claims:
+				for service in claim.services:
+					for adjustment in service.adjustments:
+						service_line_adjustments_dict = TransactionSet.serialize_adjustment(
+							transaction, service, adjustment)['service_line_adjustments_dict']
+
+						service_line_adjustments_data.append(service_line_adjustments_dict)
+
+		service_line_adjustments_data = pd.DataFrame(service_line_adjustments_data, columns=service_line_adjustments_data[0].keys())
+
+		return service_line_adjustments_data
+
+	def build_service_line_remarks(self) -> pd.DataFrame:
+		"""flatten the remittance remarks by service line to a pandas DataFrame"""
+
+		Logger.logr.info("Building service_line_remarks DataFrame")
+		service_line_remarks_data = []
+
+		for transaction in self.transactions:
+			for claim in transaction.claims:
+				for service in claim.services:
+
+					remit_service_lines_remarks_dict = TransactionSet.serialize_service(transaction, claim, service)['remit_service_lines_remarks_dict']
+
+					for remark in service.remarks:
+						if remark:
+							remit_service_lines_remarks_dict.update({'remark_code_list_qualifier': remark.qualifier,
+																					'remark_code': remark.code})
+
+					service_line_remarks_data.append(remit_service_lines_remarks_dict)
+
+		service_line_remarks_data = pd.DataFrame(service_line_remarks_data)
+
+		return pd.DataFrame(service_line_remarks_data)
+
+	def build_service_line_rendering_providers(self) -> pd.DataFrame:
+		"""flatten the remittance rendering_providers by service line to a pandas DataFrame"""
+
+		Logger.logr.info("Building service_line_remarks DataFrame")
+		rendering_providers_data = []
+
+		for transaction in self.transactions:
+			for claim in transaction.claims:
+				for service in claim.services:
+					service_line_rendering_providers_dict = TransactionSet.serialize_service(
+						transaction, claim, service)['service_line_rendering_providers_dict']
+
+					if service.rendering_provider:
+						service_line_rendering_providers_dict.update(
+							{'rendering_provider_qualifier': service.rendering_provider.qualifier,
+								'rendering_provider_id':service.rendering_provider.identification})
+
+					rendering_providers_data.append(service_line_rendering_providers_dict)
+		rendering_providers_data = pd.DataFrame(rendering_providers_data)
+
+		return pd.DataFrame(rendering_providers_data)
+
+
 	def build_remit_remarks_adjudications(self) -> pd.DataFrame:
 		"""flatten the remittance advice by inpatient/outpatient adjudication info to a pandas DataFrame"""
 
-		logger.info("Building remit_remarks_adjudications DataFrame")
+		Logger.logr.info("Building remit_remarks_adjudications DataFrame")
 		remit_remarks_adjudications_data = []
 
 		for transaction in self.transactions:
@@ -140,7 +202,7 @@ class TransactionSet:
 	def build_provider_adjustments(self) -> pd.DataFrame:
 		"""flatten the remittance advice by provider adjustment info to a pandas DataFrame"""
 
-		logger.info("Building provider_adjustments DataFrame")
+		Logger.logr.info("Building provider_adjustments DataFrame")
 		provider_adjustments_data = []
 
 		for transaction in self.transactions:
@@ -518,13 +580,35 @@ class TransactionSet:
 
 		}
 
-		return {'remit_service_lines_dict': remit_service_lines_dict}
+		remit_service_lines_remarks_dict = {
+			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'claim_service_line_id': service.service_identification.value
+			if service.service_identification else None,
+			# 'remit_service_line_key' Need more clarification
+			'remark_code_list_qualifier': None,
+			'remark_code': None,
+			'created_at': None
+		}
+
+		service_line_rendering_providers_dict = {
+			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'claim_service_line_id': service.service_identification.value
+			if service.service_identification else None,
+			'rendering_provider_qualifier': None,
+			'rendering_provider_id': None,
+			'created_at': None
+
+		}
+
+		return {'remit_service_lines_dict': remit_service_lines_dict, 'remit_service_lines_remarks_dict':
+				remit_service_lines_remarks_dict, 'service_line_rendering_providers_dict':
+													service_line_rendering_providers_dict }
 
 	@staticmethod
 	def serialize_adjustment(
 			transaction: TransactionLoop,
 			# claim: ClaimLoop,
-			# service: ServiceLoop,
+			service: ServiceLoop,
 			adjustment: ServiceAdjustmentSegment
 	) -> dict[str, dict]:
 
@@ -551,7 +635,36 @@ class TransactionSet:
 			'adjustment_quantity6': adjustment.quantity6,
 
 		}
-		return {'remit_adjustments_dict': remit_adjustments_dict }
+
+		service_line_adjustments_dict = {
+
+			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'claim_service_line_id': service.service_identification.value
+			if service.service_identification and service.service_identification.qualifier == '6R' else None,
+			'adjustment_group_code': adjustment.group_code,
+			'adjustment_reason_code': adjustment.reason_code,
+			'adjustment_amount': adjustment.amount,
+			'adjustment_quantity': adjustment.quantity,
+			'adjustment_reason_code2': adjustment.reason_code2,
+			'adjustment_amount2': adjustment.amount2,
+			'adjustment_quantity2': adjustment.quantity2,
+			'adjustment_reason_code3': adjustment.reason_code3,
+			'adjustment_amount3': adjustment.amount3,
+			'adjustment_quantity3': adjustment.quantity3,
+			'adjustment_reason_code4': adjustment.reason_code4,
+			'adjustment_amount4': adjustment.amount4,
+			'adjustment_quantity4': adjustment.quantity4,
+			'adjustment_reason_code5': adjustment.reason_code5,
+			'adjustment_amount5': adjustment.amount5,
+			'adjustment_quantity5': adjustment.quantity5,
+			'adjustment_reason_code6': adjustment.reason_code6,
+			'adjustment_amount6': adjustment.amount6,
+			'adjustment_quantity6': adjustment.quantity6,
+			'created_at': None
+
+		}
+		return {'remit_adjustments_dict': remit_adjustments_dict,
+										'service_line_adjustments_dict': service_line_adjustments_dict}
 
 	@classmethod
 	def build(cls, file_path: str) -> 'TransactionSet':
