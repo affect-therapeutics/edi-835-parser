@@ -8,6 +8,7 @@ from edi_835_parser.transaction_set.transaction_set import TransactionSet
 # logger = logging.getLogger()
 from log_conf import Logger
 
+
 def parse(path: str, debug: bool=False) -> TransactionSet:
 	if path[0] == '~':
 		path = os.path.expanduser(path)

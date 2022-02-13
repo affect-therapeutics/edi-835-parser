@@ -1,13 +1,8 @@
 from edi_835_parser import parse
 from edi_835_parser import find_edi_835_files
 import os
-# import logging.config
-#
-# logging.config.fileConfig(fname='logging.conf')
-# logger = logging.getLogger()
 from log_conf import Logger
 
-# Logger.logr.info("Hello World")
 
 input_dir = 'input'
 output_dir = 'output'

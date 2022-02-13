@@ -10,6 +10,9 @@ class PayerContact:
     code = ContactFunctionCode()
 
     def __init__(self, segment: str):
+        self.index = segment.split(':')[0]
+        segment = segment.split(':')[1]
+
         self.segment = segment
         segment = split_segment(segment)
 

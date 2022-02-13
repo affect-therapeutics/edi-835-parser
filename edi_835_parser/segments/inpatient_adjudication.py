@@ -19,6 +19,9 @@ class InpatientAdjudication:
 	non_payable_professional_component_amount = Dollars()
 
 	def __init__(self, segment: str):
+		self.index = segment.split(':')[0]
+		segment = segment.split(':')[1]
+
 		self.segment = segment
 		segment = split_segment(segment)
 

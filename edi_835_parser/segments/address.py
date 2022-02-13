@@ -8,7 +8,8 @@ class Address:
 	identifier = Identifier()
 
 	def __init__(self, segment: str):
-		self.segment = segment
+		self.index = segment.split(':')[0]
+		segment = segment.split(':')[1]
 		segment = split_segment(segment)
 
 		self.identifier = segment[0]

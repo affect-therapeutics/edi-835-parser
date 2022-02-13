@@ -112,7 +112,7 @@ class TransactionSet:
 				for service in claim.services:
 					for adjustment in service.adjustments:
 						remit_adjustments_dict = TransactionSet.serialize_adjustment(
-							transaction, service, adjustment)['remit_adjustments_dict']
+							transaction, claim, service, adjustment)['remit_adjustments_dict']
 
 						remit_adjustments_data.append(remit_adjustments_dict)
 
@@ -131,7 +131,7 @@ class TransactionSet:
 				for service in claim.services:
 					for adjustment in service.adjustments:
 						service_line_adjustments_dict = TransactionSet.serialize_adjustment(
-							transaction, service, adjustment)['service_line_adjustments_dict']
+							transaction, claim, service, adjustment)['service_line_adjustments_dict']
 
 						service_line_adjustments_data.append(service_line_adjustments_dict)
 
@@ -184,7 +184,6 @@ class TransactionSet:
 
 		return pd.DataFrame(rendering_providers_data)
 
-
 	def build_remit_remarks_adjudications(self) -> pd.DataFrame:
 		"""flatten the remittance advice by inpatient/outpatient adjudication info to a pandas DataFrame"""
 
@@ -221,6 +220,7 @@ class TransactionSet:
 	) -> dict[str, dict]:
 
 		remits_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'patient_control_id': claim.claim.patient_control_number,
 			'patient_id_qualifier': claim.patient.identification_code_qualifier,
@@ -319,6 +319,7 @@ class TransactionSet:
 			)
 
 		remit_payers_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'payer_id': transaction.payer.identification_code,
 			'payer_name': transaction.payer.name,
@@ -353,6 +354,7 @@ class TransactionSet:
 			})
 
 		remit_remarks_adjudications_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'MIA_covered_days_visits_count': None,
 			'MIA_pps_operating_outlier_amount': None,
@@ -552,6 +554,8 @@ class TransactionSet:
 			end_date = claim.claim_statement_period_end.date
 
 		remit_service_lines_dict = {
+			'remit_key': claim.claim.key,
+			'remit_service_line_key': claim.claim.key + '_' + service.service.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'claim_service_line_id': service.service_identification.value
 			if service.service_identification and service.service_identification.qualifier == '6R' else None,
@@ -581,17 +585,20 @@ class TransactionSet:
 		}
 
 		remit_service_lines_remarks_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'claim_service_line_id': service.service_identification.value
 			if service.service_identification else None,
-			# 'remit_service_line_key' Need more clarification
+			'remit_service_line_key': claim.claim.key + '_' + service.service.key,
 			'remark_code_list_qualifier': None,
 			'remark_code': None,
 			'created_at': None
 		}
 
 		service_line_rendering_providers_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'remit_service_line_key': claim.claim.key + '_' + service.service.key,
 			'claim_service_line_id': service.service_identification.value
 			if service.service_identification else None,
 			'rendering_provider_qualifier': None,
@@ -607,12 +614,13 @@ class TransactionSet:
 	@staticmethod
 	def serialize_adjustment(
 			transaction: TransactionLoop,
-			# claim: ClaimLoop,
+			claim: ClaimLoop,
 			service: ServiceLoop,
 			adjustment: ServiceAdjustmentSegment
 	) -> dict[str, dict]:
 
 		remit_adjustments_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'adjustment_group_code': adjustment.group_code,
 			'adjustment_reason_code': adjustment.reason_code,
@@ -637,10 +645,11 @@ class TransactionSet:
 		}
 
 		service_line_adjustments_dict = {
-
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'claim_service_line_id': service.service_identification.value
-			if service.service_identification and service.service_identification.qualifier == '6R' else None,
+			if service.service_identification else None,
+			'remit_service_line_key': claim.claim.key + '_' + service.service.key,
 			'adjustment_group_code': adjustment.group_code,
 			'adjustment_reason_code': adjustment.reason_code,
 			'adjustment_amount': adjustment.amount,
@@ -676,7 +685,7 @@ class TransactionSet:
 
 		segments = file.split('~')
 		segments = [segment.strip() for segment in segments]
-
+		segments = [f'{index}:{segment}' for index, segment in enumerate(segments)]
 		segments = iter(segments)
 		segment = None
 
@@ -724,7 +733,6 @@ class TransactionSet:
 		elif identifier == TransactionLoop.initiating_identifier:
 			transaction, segments, segment = TransactionLoop.build(segment, segments)
 			return BuildAttributeResponse('transaction', transaction, segment, segments)
-
 
 		else:
 			return BuildAttributeResponse(None, None, None, segments)
