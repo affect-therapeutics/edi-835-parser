@@ -48,12 +48,12 @@ def sum_payments(self) -> float:
 	return amount
 
 
-def count_claims(self) -> int:
-	count = 0
-	for transaction_set in self:
-		count += len(transaction_set.claims)
-
-	return count
+# def count_claims(self) -> int:
+# 	count = 0
+# 	for transaction_set in self:
+# 		count += len(transaction_set.claims)
+#
+# 	return count
 
 
 def count_patients(self) -> int:
@@ -67,12 +67,12 @@ def count_patients(self) -> int:
 	return len(patients)
 
 
-def count_transactions(self) -> int:
-	count = 0
-	for transaction_set in self:
-		count += len(transaction_set.transactions)
-
-	return count
+# def count_transactions(self) -> int:
+# 	count = 0
+# 	for transaction_set in self:
+# 		count += len(transaction_set.transactions)
+#
+# 	return count
 
 
 if __name__ == '__main__':

@@ -49,8 +49,8 @@ class Service:
 		self.modifier2 = segment[1]
 		self.modifier3 = segment[1]
 		self.modifier4 = segment[1]
-		self.charge_amount = segment[2]
-		self.paid_amount = segment[3]
+		self.charge_amount = get_element(segment, 2)
+		self.paid_amount = get_element(segment, 3)
 		self.NUBC_revenue_code = get_element(segment, 4)
 
 
@@ -60,14 +60,14 @@ class Service:
 
 		self.billed_units = get_element(segment, 7, default=self.allowed_units)
 
-		if len(self.segment) > 6:
-			self.product_qualifier = get_element(segment, 6)
-			self.procedure_code = get_element(segment, 6)
-			self.procedure_modifier1 = get_element(segment, 6)
-			self.procedure_modifier2 = get_element(segment, 6)
-			self.procedure_modifier3 = get_element(segment, 6)
-			self.procedure_modifier4 = get_element(segment, 6)
-			self.code_description = get_element(segment, 6)
+		# if len(self.segment) > 6:
+		self.product_qualifier = get_element(segment, 6)
+		self.procedure_code = get_element(segment, 6)
+		self.procedure_modifier1 = get_element(segment, 6)
+		self.procedure_modifier2 = get_element(segment, 6)
+		self.procedure_modifier3 = get_element(segment, 6)
+		self.procedure_modifier4 = get_element(segment, 6)
+		self.code_description = get_element(segment, 6)
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())

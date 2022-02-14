@@ -19,8 +19,8 @@ class PayerContact:
         self.identifier = segment[0]
         self.code = segment[1]
         self.name = segment[2]
-        self.communication_no_or_url_qualifier = segment[3]
-        self.communication_no_or_url = segment[4]
+        self.communication_no_or_url_qualifier = get_element(segment, 3)
+        self.communication_no_or_url = get_element(segment, 4)
 
     def __repr__(self):
         return '\n'.join(str(item) for item in self.__dict__.items())

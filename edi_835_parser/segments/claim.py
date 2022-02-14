@@ -30,7 +30,7 @@ class Claim:
 		self.charge_amount = segment[3]
 		self.paid_amount = segment[4]
 		self.patient_responsibility_amount = segment[5]
-		self.facility_type_code = segment[8]
+		self.facility_type_code = get_element(segment, 8)
 		self.claim_frequency_code = get_element(segment, 9)
 		self.claim_filing_indicator_code = segment[6]
 		self.payer_claim_control_number = segment[7]

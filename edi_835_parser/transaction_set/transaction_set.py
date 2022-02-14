@@ -222,6 +222,7 @@ class TransactionSet:
 		remits_dict = {
 			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			# 'client_id': need mapping info
 			'patient_control_id': claim.claim.patient_control_number,
 			'patient_id_qualifier': claim.patient.identification_code_qualifier,
 			'patient_id': claim.patient.identification_code,
@@ -230,7 +231,6 @@ class TransactionSet:
 			'patient_middle_name': claim.patient.middle_name,
 			'patient_name_suffix': claim.patient.name_suffix,
 			'patient_name_prefix': claim.patient.name_prefix,
-			'payer_id': transaction.payer.identification_code,
 			'subscriber_id_qualifier': None,
 			'subscriber_id': None,
 			'subscriber_last_name': None,
@@ -239,11 +239,14 @@ class TransactionSet:
 			'subscriber_suffix': None,
 			'subscriber_prefix': None,
 			'subscriber_patient_relationship': None,
+			'payer_id': transaction.payer.identification_code,
 			'payer_name': transaction.payer.name,
-			'bt_facility_type_code_clp08': claim.claim.facility_type_code,
-			'bt_facility_type_code_clp09': claim.claim.claim_frequency_code,
+			'bt_facility_type_code_CLP08': claim.claim.facility_type_code,
+			'bt_facility_type_code_CLP09': claim.claim.claim_frequency_code,
+			# 'bt_facility_type_code_TS302': need to handle TS3 segment
 			'payee_id_qualifier': transaction.payee.identification_code_qualifier,
 			'payee_id': transaction.payee.identification_code,
+			'payee_name': transaction.payee.name,
 			'provider_entity_type_qualifier': None,
 			'provider_id_qualifier': None,
 			'provider_id': None,
@@ -252,7 +255,7 @@ class TransactionSet:
 			'provider_middle_name': None,
 			'provider_suffix': None,
 			'provider_prefix': None,
-			'claim_received_date': claim.claim_received_date.date,
+			'claim_received_date': claim.claim_received_date.date if claim.claim_received_date else None,
 			'claim_paid_date': transaction.financial_information.transaction_date,
 			'claim_status': claim.claim.status,
 			'claim_total_charge_amount': claim.claim.charge_amount,
@@ -274,7 +277,7 @@ class TransactionSet:
 			if claim.claim_statement_period_end else None,
 			'claim_coverage_expiration': claim.claim_coverage_expiration.date
 			if claim.claim_coverage_expiration else None,
-			'claim_coverage_amount': claim.amount.amount,
+			'claim_coverage_amount': claim.amount.amount if claim.amount else None,
 			'claim_contract_code': claim.claim_contract_code.value if claim.claim_contract_code else None,
 			'created_at': None
 
@@ -641,6 +644,7 @@ class TransactionSet:
 			'adjustment_reason_code6': adjustment.reason_code6,
 			'adjustment_amount6': adjustment.amount6,
 			'adjustment_quantity6': adjustment.quantity6,
+			'created_at': None
 
 		}
 
@@ -736,6 +740,27 @@ class TransactionSet:
 
 		else:
 			return BuildAttributeResponse(None, None, None, segments)
+
+	def count_claims(self) -> int:
+		count = 0
+		for transaction in self.transactions:
+			count += len(transaction.claims)
+
+		return count
+
+	def count_transactions(self) -> int:
+		count = 0
+		count += len(self.transactions)
+
+		return count
+
+	def count_services(self) -> int:
+		count = 0
+		for transaction in self.transactions:
+			for claim in transaction.claims:
+				count += len(claim.services)
+
+		return count
 
 
 if __name__ == '__main__':
