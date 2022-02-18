@@ -7,6 +7,7 @@ from edi_835_parser.segments.address import Address as AddressSegment
 from edi_835_parser.segments.location import Location as LocationSegment
 from edi_835_parser.segments.payer_contact import PayerContact as PayerContactSegment
 from edi_835_parser.segments.reference import Reference as ReferenceSegment
+from edi_835_parser.segments.provider_summary import ProviderSummary as ProviderSummarySegment
 from edi_835_parser.segments.utilities import find_identifier
 
 from log_conf import Logger
@@ -15,6 +16,8 @@ from log_conf import Logger
 class Organization:
 	initiating_identifier = OrganizationSegment.identification
 	terminating_identifiers = [
+		'LX',
+		ProviderSummarySegment.identification,
 		ClaimSegment.identification,
 		OrganizationSegment.identification,
 		'SE'
@@ -23,13 +26,13 @@ class Organization:
 	def __init__(self, organization: OrganizationSegment = None, location: LocationSegment = None,
 														address: AddressSegment = None,
 														contacts: List[PayerContactSegment] = None,
-														additional_id: ReferenceSegment = None):
+														references: List[ReferenceSegment] = None):
 
 		self.organization = organization
 		self.location = location
 		self.address = address
 		self.contacts = contacts if contacts else []
-		self.additional_id = additional_id
+		self.references = references if references else []
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
@@ -63,7 +66,8 @@ class Organization:
 					segment = None
 
 				elif identifier == ReferenceSegment.identification:
-					organization.additional_id = ReferenceSegment(segment)
+					reference = ReferenceSegment(segment)
+					organization.references.append(reference)
 					segment = None
 
 				elif identifier in cls.terminating_identifiers:

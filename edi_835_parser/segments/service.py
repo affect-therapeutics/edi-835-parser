@@ -1,5 +1,4 @@
 from edi_835_parser.elements.identifier import Identifier
-from edi_835_parser.elements.dollars import Dollars
 from edi_835_parser.elements.service_code import ServiceCode
 from edi_835_parser.elements.service_qualifier import ServiceQualifier
 from edi_835_parser.elements.service_modifier1 import ServiceModifier1
@@ -15,8 +14,6 @@ class Service:
 	identification = 'SVC'
 
 	identifier = Identifier()
-	charge_amount = Dollars()
-	paid_amount = Dollars()
 	code = ServiceCode()
 	index = Integer()
 	procedure_code = ServiceCode()
@@ -52,15 +49,8 @@ class Service:
 		self.charge_amount = get_element(segment, 2)
 		self.paid_amount = get_element(segment, 3)
 		self.NUBC_revenue_code = get_element(segment, 4)
-
-
-		# assume unit count of one if unit not provided
-		default = 0 if self.paid_amount == 0 else 1
-		self.allowed_units = get_element(segment, 5, default=default)
-
-		self.billed_units = get_element(segment, 7, default=self.allowed_units)
-
-		# if len(self.segment) > 6:
+		self.adjudicated_line_item_quantity = get_element(segment, 5)
+		self.submitted_line_item_quantity = get_element(segment, 7)
 		self.product_qualifier = get_element(segment, 6)
 		self.procedure_code = get_element(segment, 6)
 		self.procedure_modifier1 = get_element(segment, 6)

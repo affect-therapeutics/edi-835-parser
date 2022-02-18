@@ -16,12 +16,16 @@ N1*PE*UNIVERSITY HOSPITALS MEDICAL GROUP INC*XX*1669499414~
 N3*PO BOX 772044~
 N4*DETROIT*MI*482772044~
 REF*TJ*204881619~
+REF*PQ*other_payee_id1~
 LX*1~
+TS3**facility_type_code1~
 CLP*patient_control_number0*2*23*1.78**15*M000475857-00*23*1~
+CAS*grp_code*reason_code*amount*quantity~
 NM1*QC*1*patient_last_name0*patient_first_name0*I***MI*patient_id0~
 NM1*74*1**HAROLD*R~
 NM1*82*1*ANDERSON*JOHN*S**MD*XX*1376607150~
 REF*1L*10000000~
+REF*CE*Open Choice NET 04632~
 REF*SY*375244396~
 DTM*050*20211222~
 AMT*AU*23~
@@ -31,10 +35,11 @@ CAS*OA*23*21.22~
 REF*6R*UMG10063282686-1~
 AMT*B6*23~
 CLP*patient_control_number1*2*105*0*7.35*15*M000476255-00*19*1~
+CAS*grp_code*reason_code*amount*quantity~
 NM1*QC*1*patient_last_name1*patient_first_name1*D***MI*patient_id1~
 NM1*74*1******C*93400955501~
 NM1*82*1*KIERSON*MALCA***DO*XX*1497911648~
-MIA*2*3*4*3*remark_code1*5*6*7*8****~
+MIA*2*3*4*3*remark_code1*5*6*7*8***************remark_code04~
 MOA*1*2*3*4*****~
 REF*1L*10000000~
 REF*28*103192~
@@ -67,11 +72,13 @@ N1*PE*UNIVERSITY PRIMARY CARE PRACTICES INC*XX*1720220098~
 N3*PO BOX 772040~
 N4*DETROIT*MI*482772040~
 REF*TJ*341768928~
+REF*PQ*other_payee_id2~
 LX*1~
+TS3**facility_type_code2~
 CLP*patient_control_number2*1*157*132.81*20*15*E000379133-00*11~
 NM1*QC*1*patient_last_name2*patient_first_name2****MI*patient_id2~
 NM1*82*1*FURNESS*PATRICK****XX*1215927314~
-MIA*2*3*4*3*remark_code2*5*6*7*8****~
+MIA*2*3*4*3*remark_code2*5*6*7*8***************remark_code04~
 MOA*1*2*3*4*****~
 REF*1L*10000000~
 REF*28*121121~
@@ -96,7 +103,7 @@ CLP*patient_control_number3*2*268*5.3*20*15*M000475749-00*11*1~
 NM1*QC*1*patient_last_name3*patient_first_name3*R***MI*patient_id3~
 NM1*74*1******C*96400662701~
 NM1*82*1*RABER*DOUG****XX*1578554846~
-MIA*2*3*4*3*remark_code3*5*6*7*8****~
+MIA*2*3*4*3*remark_code3*5*6*7*8***************remark_code04~
 MOA*1*2*3*4*****~
 REF*1L*10000000~
 REF*28*102720~

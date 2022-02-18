@@ -2,7 +2,8 @@ from edi_835_parser.elements import Element
 
 contact_function_codes = {
     'CX': 'payers_claim_office',
-    'IC': 'information_contact'
+    'IC': 'information_contact',
+    'BL': 'technical_contact'
 }
 
 

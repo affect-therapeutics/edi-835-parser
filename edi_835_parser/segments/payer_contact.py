@@ -18,7 +18,7 @@ class PayerContact:
 
         self.identifier = segment[0]
         self.code = segment[1]
-        self.name = segment[2]
+        self.name = get_element(segment, 2)
         self.communication_no_or_url_qualifier = get_element(segment, 3)
         self.communication_no_or_url = get_element(segment, 4)
 

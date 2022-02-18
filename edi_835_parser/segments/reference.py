@@ -7,7 +7,7 @@ class Reference:
 	identification = 'REF'
 
 	identifier = Identifier()
-	# qualifier = ReferenceQualifier()
+	qualifier = ReferenceQualifier()
 
 	def __init__(self, segment: str):
 		self.index = segment.split(':')[0]
@@ -18,6 +18,7 @@ class Reference:
 
 		self.identifier = segment[0]
 		self.qualifier = segment[1]
+		self.qualifier_code = segment[1]
 		self.value = segment[2]
 
 	def __repr__(self) -> str:
