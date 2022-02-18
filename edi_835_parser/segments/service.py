@@ -32,9 +32,9 @@ class Service:
 	billed_units = Integer()
 
 	def __init__(self, segment: str):
-		self.index = segment.split(':')[0]
+		self.index = segment.split(':', 1)[0]
 		self.key = str(self.index+1)
-		segment = segment.split(':')[1]
+		segment = segment.split(':', 1)[1]
 
 		self.segment = segment
 		segment = split_segment(segment)

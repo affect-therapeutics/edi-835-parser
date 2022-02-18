@@ -10,8 +10,8 @@ class Organization:
 	type = OrganizationType()
 
 	def __init__(self, segment: str):
-		self.index = segment.split(':')[0]
-		segment = segment.split(':')[1]
+		self.index = segment.split(':', 1)[0]
+		segment = segment.split(':', 1)[1]
 
 		self.segment = segment
 		segment = split_segment(segment)
