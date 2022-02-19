@@ -10,14 +10,17 @@ class PayerContact:
     code = ContactFunctionCode()
 
     def __init__(self, segment: str):
+        self.index = segment.split(':', 1)[0]
+        segment = segment.split(':', 1)[1]
+
         self.segment = segment
         segment = split_segment(segment)
 
         self.identifier = segment[0]
         self.code = segment[1]
-        self.name = segment[2]
-        self.communication_no_or_url_qualifier = segment[3]
-        self.communication_no_or_url = segment[4]
+        self.name = get_element(segment, 2)
+        self.communication_no_or_url_qualifier = get_element(segment, 3)
+        self.communication_no_or_url = get_element(segment, 4)
 
     def __repr__(self):
         return '\n'.join(str(item) for item in self.__dict__.items())

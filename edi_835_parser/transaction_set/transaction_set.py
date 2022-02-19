@@ -9,7 +9,7 @@ from edi_835_parser.loops.service import Service as ServiceLoop
 from edi_835_parser.loops.organization import Organization as OrganizationLoop
 from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.interchange import Interchange as InterchangeSegment
-from edi_835_parser.segments.service_adjustment import ServiceAdjustment as ServiceAdjustmentSegment
+from edi_835_parser.segments.adjustment import Adjustment as ServiceAdjustmentSegment
 
 from log_conf import Logger
 
@@ -34,36 +34,36 @@ class TransactionSet:
 
 		Logger.logr.info("Building remits DataFrame")
 
-		remits_df = []
+		remits_data = []
 
 		for transaction in self.transactions:
 			for claim in transaction.claims:
 
 				remits_dict = TransactionSet.serialize_claim(claim, transaction)['remits_dict']
 
-				remits_df.append(remits_dict)
+				remits_data.append(remits_dict)
 
-		remits_df = pd.DataFrame(remits_df, columns=remits_df[0].keys())
+		remits_data = pd.DataFrame(remits_data, columns=remits_data[0].keys())
 
-		return remits_df
+		return remits_data
 
 	def build_remit_payers(self) -> pd.DataFrame:
 		"""flatten the remittance advice payers by claim to a pandas DataFrame"""
 
 		Logger.logr.info("Building remits_payers DataFrame")
 
-		remit_payers_df = []
+		remit_payers_data = []
 
 		for transaction in self.transactions:
 			for claim in transaction.claims:
 
 				remit_payers_dict = TransactionSet.serialize_claim(claim, transaction)['remit_payers_dict']
 
-				remit_payers_df.append(remit_payers_dict)
+				remit_payers_data.append(remit_payers_dict)
 
-		remit_payers_df = pd.DataFrame(remit_payers_df, columns=remit_payers_df[0].keys())
+		remit_payers_data = pd.DataFrame(remit_payers_data, columns=remit_payers_data[0].keys())
 
-		return remit_payers_df
+		return remit_payers_data
 
 	def build_payment_fin_info(self) -> pd.DataFrame:
 		"""flatten the remittance payment financial info by transaction to a pandas DataFrame"""
@@ -109,14 +109,10 @@ class TransactionSet:
 
 		for transaction in self.transactions:
 			for claim in transaction.claims:
-				for service in claim.services:
-					for adjustment in service.adjustments:
-						remit_adjustments_dict = TransactionSet.serialize_adjustment(
-							transaction, service, adjustment)['remit_adjustments_dict']
+				remit_adjustments_dict = TransactionSet.serialize_claim(claim, transaction)['remit_adjustments_dict']
+				remit_adjustments_data.append(remit_adjustments_dict)
 
-						remit_adjustments_data.append(remit_adjustments_dict)
-
-		remit_adjustments_data = pd.DataFrame(remit_adjustments_data, columns=remit_adjustments_data[0].keys())
+		remit_adjustments_data = pd.DataFrame(remit_adjustments_data)
 
 		return remit_adjustments_data
 
@@ -131,11 +127,38 @@ class TransactionSet:
 				for service in claim.services:
 					for adjustment in service.adjustments:
 						service_line_adjustments_dict = TransactionSet.serialize_adjustment(
-							transaction, service, adjustment)['service_line_adjustments_dict']
+							transaction, claim, service, adjustment)['service_line_adjustments_dict']
 
 						service_line_adjustments_data.append(service_line_adjustments_dict)
+		if len(service_line_adjustments_data) < 1:
+			service_line_adjustments_data.append({
+				'remit_key': None,
+				'edi_transaction_id_st02': None,
+				'claim_service_line_id': None,
+				'remit_service_line_key': None,
+				'adjustment_group_code': None,
+				'adjustment_reason_code': None,
+				'adjustment_amount': None,
+				'adjustment_quantity': None,
+				'adjustment_reason_code2': None,
+				'adjustment_amount2': None,
+				'adjustment_quantity2': None,
+				'adjustment_reason_code3': None,
+				'adjustment_amount3': None,
+				'adjustment_quantity3': None,
+				'adjustment_reason_code4': None,
+				'adjustment_amount4': None,
+				'adjustment_quantity4': None,
+				'adjustment_reason_code5': None,
+				'adjustment_amount5': None,
+				'adjustment_quantity5': None,
+				'adjustment_reason_code6': None,
+				'adjustment_amount6': None,
+				'adjustment_quantity6': None,
+				'created_at': None
+									})
 
-		service_line_adjustments_data = pd.DataFrame(service_line_adjustments_data, columns=service_line_adjustments_data[0].keys())
+		service_line_adjustments_data = pd.DataFrame(service_line_adjustments_data)
 
 		return service_line_adjustments_data
 
@@ -148,15 +171,24 @@ class TransactionSet:
 		for transaction in self.transactions:
 			for claim in transaction.claims:
 				for service in claim.services:
-
-					remit_service_lines_remarks_dict = TransactionSet.serialize_service(transaction, claim, service)['remit_service_lines_remarks_dict']
-
 					for remark in service.remarks:
-						if remark:
-							remit_service_lines_remarks_dict.update({'remark_code_list_qualifier': remark.qualifier,
-																					'remark_code': remark.code})
+						remit_service_lines_remarks_dict = TransactionSet.serialize_service(transaction, claim, service)['remit_service_lines_remarks_dict']
 
-					service_line_remarks_data.append(remit_service_lines_remarks_dict)
+						remit_service_lines_remarks_dict.update({'remark_code_list_qualifier': remark.qualifier,
+																					'remark_code': remark.code})
+						service_line_remarks_data.append(remit_service_lines_remarks_dict)
+
+		if len(service_line_remarks_data) < 1:
+
+			service_line_remarks_data.append({
+				'remit_key': None,
+				'edi_transaction_id_st02': None,
+				'claim_service_line_id': None,
+				'remit_service_line_key': None,
+				'remark_code_list_qualifier': None,
+				'remark_code': None,
+				'created_at': None
+			})
 
 		service_line_remarks_data = pd.DataFrame(service_line_remarks_data)
 
@@ -171,19 +203,24 @@ class TransactionSet:
 		for transaction in self.transactions:
 			for claim in transaction.claims:
 				for service in claim.services:
-					service_line_rendering_providers_dict = TransactionSet.serialize_service(
-						transaction, claim, service)['service_line_rendering_providers_dict']
-
 					if service.rendering_provider:
-						service_line_rendering_providers_dict.update(
-							{'rendering_provider_qualifier': service.rendering_provider.qualifier,
-								'rendering_provider_id':service.rendering_provider.identification})
+						service_line_rendering_providers_dict = TransactionSet.serialize_service(
+							transaction, claim, service)['service_line_rendering_providers_dict']
+						rendering_providers_data.append(service_line_rendering_providers_dict)
 
-					rendering_providers_data.append(service_line_rendering_providers_dict)
+		if len(rendering_providers_data) < 1:
+			rendering_providers_data.append({
+				'remit_key': None,
+				'edi_transaction_id_st02': None,
+				'remit_service_line_key': None,
+				'claim_service_line_id': None,
+				'rendering_provider_qualifier': None,
+				'rendering_provider_id': None,
+				'created_at': None
+					})
 		rendering_providers_data = pd.DataFrame(rendering_providers_data)
 
 		return pd.DataFrame(rendering_providers_data)
-
 
 	def build_remit_remarks_adjudications(self) -> pd.DataFrame:
 		"""flatten the remittance advice by inpatient/outpatient adjudication info to a pandas DataFrame"""
@@ -221,7 +258,9 @@ class TransactionSet:
 	) -> dict[str, dict]:
 
 		remits_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'client_id': None,  # populated after transformation
 			'patient_control_id': claim.claim.patient_control_number,
 			'patient_id_qualifier': claim.patient.identification_code_qualifier,
 			'patient_id': claim.patient.identification_code,
@@ -230,7 +269,6 @@ class TransactionSet:
 			'patient_middle_name': claim.patient.middle_name,
 			'patient_name_suffix': claim.patient.name_suffix,
 			'patient_name_prefix': claim.patient.name_prefix,
-			'payer_id': transaction.payer.identification_code,
 			'subscriber_id_qualifier': None,
 			'subscriber_id': None,
 			'subscriber_last_name': None,
@@ -239,11 +277,15 @@ class TransactionSet:
 			'subscriber_suffix': None,
 			'subscriber_prefix': None,
 			'subscriber_patient_relationship': None,
+			'payer_id': transaction.payer.identification_code,
 			'payer_name': transaction.payer.name,
-			'bt_facility_type_code_clp08': claim.claim.facility_type_code,
-			'bt_facility_type_code_clp09': claim.claim.claim_frequency_code,
+			'bt_facility_type_code_CLP08': claim.claim.facility_type_code,
+			'bt_facility_type_code_CLP09': claim.claim.claim_frequency_code,
+			'bt_facility_type_code_TS302': transaction.provider_summary.facility_type_code
+			if transaction.provider_summary else None,
 			'payee_id_qualifier': transaction.payee.identification_code_qualifier,
 			'payee_id': transaction.payee.identification_code,
+			'payee_name': transaction.payee.name,
 			'provider_entity_type_qualifier': None,
 			'provider_id_qualifier': None,
 			'provider_id': None,
@@ -252,7 +294,7 @@ class TransactionSet:
 			'provider_middle_name': None,
 			'provider_suffix': None,
 			'provider_prefix': None,
-			'claim_received_date': claim.claim_received_date.date,
+			'claim_received_date': claim.claim_received_date.date if claim.claim_received_date else None,
 			'claim_paid_date': transaction.financial_information.transaction_date,
 			'claim_status': claim.claim.status,
 			'claim_total_charge_amount': claim.claim.charge_amount,
@@ -274,9 +316,10 @@ class TransactionSet:
 			if claim.claim_statement_period_end else None,
 			'claim_coverage_expiration': claim.claim_coverage_expiration.date
 			if claim.claim_coverage_expiration else None,
-			'claim_coverage_amount': claim.amount.amount,
+			'claim_coverage_amount': claim.amount.amount if claim.amount else None,
 			'claim_contract_code': claim.claim_contract_code.value if claim.claim_contract_code else None,
-			'created_at': None
+			'created_at': None,
+			'case_number': None  # populated after transformation
 
 		}
 
@@ -295,7 +338,7 @@ class TransactionSet:
 
 		if claim.rendering_provider:
 			remits_dict.update({
-				'provider_entity_type_qualifier': claim.rendering_provider.type,
+				'provider_entity_type_qualifier': claim.rendering_provider.type_code,
 				'provider_id_qualifier': claim.rendering_provider.identification_code_qualifier,
 				'provider_id': claim.rendering_provider.identification_code,
 				'provider_name': claim.rendering_provider.name,
@@ -319,6 +362,7 @@ class TransactionSet:
 			)
 
 		remit_payers_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'payer_id': transaction.payer.identification_code,
 			'payer_name': transaction.payer.name,
@@ -331,9 +375,13 @@ class TransactionSet:
 			'payer_contact_business': None,
 			'payer_contact_business_qualifier': None,
 			'payer_contact_business_name': None,
+			'payer_contact_technical': None,
+			'payer_contact_technical_qualifier': None,
+			'payer_contact_technical_name': None,
 			'payer_contact_web': None,
 			'payer_contact_web_qualifier': None,
 			'payer_contact_web_name': None,
+			'payer_id_add': transaction.payer_identification.value if transaction.payer_identification else None,
 			'created_at': None
 
 		}
@@ -345,6 +393,13 @@ class TransactionSet:
 				'payer_contact_business_name': transaction.payer_contact_business.name,
 			})
 
+		if transaction.payer_contact_technical:
+			remit_payers_dict.update({
+				'payer_contact_technical': transaction.payer_contact_technical.communication_no_or_url,
+				'payer_contact_technical_qualifier': transaction.payer_contact_technical.communication_no_or_url_qualifier,
+				'payer_contact_technical_name': transaction.payer_contact_technical.name,
+			})
+
 		if transaction.payer_contact_web:
 			remit_payers_dict.update({
 				'payer_contact_web': transaction.payer_contact_web.communication_no_or_url,
@@ -353,6 +408,7 @@ class TransactionSet:
 			})
 
 		remit_remarks_adjudications_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'MIA_covered_days_visits_count': None,
 			'MIA_pps_operating_outlier_amount': None,
@@ -393,6 +449,8 @@ class TransactionSet:
 
 		if claim.inpatient:
 			remit_remarks_adjudications_dict.update({
+				'remit_key': claim.claim.key,
+				'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 				'MIA_covered_days_visits_count': claim.inpatient.covered_days_visits_count,
 				'MIA_pps_operating_outlier_amount': claim.inpatient.pps_operating_outlier_amount,
 				'MIA_lifetime_psychiatric_days_count': claim.inpatient.lifetime_psychiatric_days_count,
@@ -411,33 +469,88 @@ class TransactionSet:
 				'MIA_pps_operating_federal_specific_drg_amount': claim.inpatient.pps_operating_federal_specific_drg_amount,
 				'MIA_claim_pps_capital_outlier_amount': claim.inpatient.claim_pps_capital_outlier_amount,
 				'MIA_claim_indirect_teaching_amount': claim.inpatient.claim_indirect_teaching_amount,
-				'MIA_non_payable_professional_component_amount': claim.inpatient.non_payable_professional_component_amount,
+				'MIA_nonpayable_professional_component_amount': claim.inpatient.non_payable_professional_component_amount,
 				'MIA_claim_remark_code1': claim.inpatient.remark_code1,
 				'MIA_claim_remark_code2': claim.inpatient.remark_code2,
 				'MIA_claim_remark_code3': claim.inpatient.remark_code3,
 				'MIA_claim_remark_code4': claim.inpatient.remark_code4,
-				# 'MIA_pps_capital_exception_amount': claim.inpatient., no mapping info available at the moment
+				'MIA_pps_capital_exception_amount': claim.inpatient.pps_capital_exception_amount
 
 			})
 
 		if claim.outpatient:
 			remit_remarks_adjudications_dict.update({
-				# 'MOA_reimbursement_rate': no mapping info available,
-				# 'MOA_claim_hcpcs_payment_amount': no mapping info available,
+				'remit_key': claim.claim.key,
+				'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+				'MOA_reimbursement_rate': claim.outpatient.reimbursement_rate,
+				'MOA_claim_hcpcs_payment_amount': claim.outpatient.claim_hcpcs_payment_amount,
 				'MOA_claim_remark_code1': claim.outpatient.remark_code1,
 				'MOA_claim_remark_code2': claim.outpatient.remark_code2,
 				'MOA_claim_remark_code3': claim.outpatient.remark_code3,
 				'MOA_claim_remark_code4': claim.outpatient.remark_code4,
 				'MOA_claim_remark_code5': claim.outpatient.remark_code5,
 				'MOA_claim_esrd_payment_amount': claim.outpatient.claim_esrd_payment_amount,
-				'MOA_non_payable_professional_component_amount': claim.outpatient.
+				'MOA_nonpayable_professional_component_amount': claim.outpatient.
 				non_payable_professional_component_amount
 
 
 			})
 
+		remit_adjustments_dict = {
+			'remit_key': None,
+			'edi_transaction_id_st02': None,
+			'adjustment_group_code': None,
+			'adjustment_reason_code': None,
+			'adjustment_amount': None,
+			'adjustment_quantity': None,
+			'adjustment_reason_code2': None,
+			'adjustment_amount2': None,
+			'adjustment_quantity2': None,
+			'adjustment_reason_code3': None,
+			'adjustment_amount3': None,
+			'adjustment_quantity3': None,
+			'adjustment_reason_code4': None,
+			'adjustment_amount4': None,
+			'adjustment_quantity4': None,
+			'adjustment_reason_code5': None,
+			'adjustment_amount5': None,
+			'adjustment_quantity5': None,
+			'adjustment_reason_code6': None,
+			'adjustment_amount6': None,
+			'adjustment_quantity6': None,
+			'created_at': None
+		}
+
+		if claim.adjustment:
+
+			remit_adjustments_dict.update({
+					'remit_key': claim.claim.key,
+					'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+					'adjustment_group_code': claim.adjustment.group_code,
+					'adjustment_reason_code': claim.adjustment.reason_code,
+					'adjustment_amount': claim.adjustment.amount,
+					'adjustment_quantity': claim.adjustment.quantity,
+					'adjustment_reason_code2': claim.adjustment.reason_code2,
+					'adjustment_amount2': claim.adjustment.amount2,
+					'adjustment_quantity2': claim.adjustment.quantity2,
+					'adjustment_reason_code3': claim.adjustment.reason_code3,
+					'adjustment_amount3': claim.adjustment.amount3,
+					'adjustment_quantity3': claim.adjustment.quantity3,
+					'adjustment_reason_code4': claim.adjustment.reason_code4,
+					'adjustment_amount4': claim.adjustment.amount4,
+					'adjustment_quantity4': claim.adjustment.quantity4,
+					'adjustment_reason_code5': claim.adjustment.reason_code5,
+					'adjustment_amount5': claim.adjustment.amount5,
+					'adjustment_quantity5': claim.adjustment.quantity5,
+					'adjustment_reason_code6': claim.adjustment.reason_code6,
+					'adjustment_amount6': claim.adjustment.amount6,
+					'adjustment_quantity6': claim.adjustment.quantity6,
+					'created_at': None
+				})
+
 		return {'remits_dict': remits_dict, 'remit_payers_dict': remit_payers_dict,
-					'remit_remarks_adjudications_dict': remit_remarks_adjudications_dict}
+										'remit_remarks_adjudications_dict': remit_remarks_adjudications_dict,
+										'remit_adjustments_dict': remit_adjustments_dict}
 
 	@staticmethod
 	def serialize_transaction(
@@ -446,6 +559,8 @@ class TransactionSet:
 
 		remit_financial_info_dict = {
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'alt_id': None,  # this col gets populated during transformation
+			'fin_info_payer_id': transaction.financial_information.payer_id,
 			'fin_info_receiver_account_number_qualifier': transaction.financial_information.account_no_qualifier,
 			'fin_info_receiver_account_number': transaction.financial_information.receiver_or_provider_acc_no,
 			'fin_info_originating_company_identifier': transaction.financial_information.origin_company_code,
@@ -465,17 +580,22 @@ class TransactionSet:
 			'trace_reference_identification_check_num': transaction.trace_number.ref_identification,
 			'payer_name': transaction.payer.name,
 			'payee_name': transaction.payee.name,
+			'created_at': None,
+			'tax_payee_id_qualifier': transaction.payee_identification.qualifier_code if transaction.payee_identification else None,
+			'tax_payee_id': transaction.payee_identification.value if transaction.payee_identification else None,
 			'payee_id_qualifier': transaction.payee.identification_code_qualifier,
 			'payee_id': transaction.payee.identification_code,
-			'tax_payee_id_qualifier': transaction.payee_identification.qualifier if transaction.payee_identification else None,
-			'tax_payee_id': transaction.payee_identification.value if transaction.payee_identification else None,
-			'created_at': None
+			'other_payee_id_qualifier' : transaction.other_payee_identification.qualifier_code
+			if transaction.other_payee_identification else None,
+			'other_payee_id': transaction.other_payee_identification.value
+			if transaction.other_payee_identification else None
+
 
 		}
 
 		provider_adjustment_dict = {
 			'provider_id': None,
-			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'edi_transaction_id_st02': None,
 			'fiscal_period_date': None,
 			'provider_adjustment_reason_code1': None,
 			'provider_adjustment_id1': None,
@@ -502,6 +622,7 @@ class TransactionSet:
 		if transaction.provider_adjustment:
 			provider_adjustment_dict.update({
 				'provider_id': transaction.provider_adjustment.provider_id,
+				'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 				'fiscal_period_date': transaction.provider_adjustment.fiscal_period_date,
 				'provider_adjustment_reason_code1': transaction.provider_adjustment.reason_code1,
 				'provider_adjustment_id1': transaction.provider_adjustment.id1,
@@ -552,9 +673,12 @@ class TransactionSet:
 			end_date = claim.claim_statement_period_end.date
 
 		remit_service_lines_dict = {
+			'remit_key': claim.claim.key,
+			'remit_service_line_key': claim.claim.key + '_' + service.service.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'claim_service_line_id': service.service_identification.value
-			if service.service_identification and service.service_identification.qualifier == '6R' else None,
+			if service.service_identification else None,
+			'adjudicated_product_service_id': service.service.code,
 			'adjudicated_modifier1': service.service.modifier1,
 			'adjudicated_modifier2': service.service.modifier2,
 			'adjudicated_modifier3': service.service.modifier3,
@@ -563,7 +687,7 @@ class TransactionSet:
 			'adjudicated_line_item_amount_paid': service.service.paid_amount,
 			'adjudicated_revenue_code': service.service.NUBC_revenue_code,
 			'adjudicated_product_service_id_qualifer': service.service.qualifier,
-			'adjudicated_line_item_quantity': service.service.allowed_units,
+			'adjudicated_line_item_quantity': service.service.adjudicated_line_item_quantity,
 			'submitted_product_service_id_qualifer': service.service.product_qualifier,
 			'submitted_product_service_id':service.service.procedure_code,
 			'submitted_adjudicated_modifier1': service.service.procedure_modifier1,
@@ -571,9 +695,9 @@ class TransactionSet:
 			'submitted_adjudicated_modifier3': service.service.procedure_modifier3,
 			'submitted_adjudicated_modifier4': service.service.procedure_modifier4,
 			'submitted_description': service.service.code_description,
-			'submitted_line_item_quantity': service.service.billed_units,
+			'submitted_line_item_quantity': service.service.submitted_line_item_quantity,
 			'line_allowed_amount': service.allowed_amount,
-			'service_date_qualifier': service.service_date.qualifier_code,
+			'service_date_qualifier': service.service_date.qualifier_code if service.service_date else None,
 			'service_line_start_date': start_date,
 			'service_line_end_date': end_date,
 			'created_at': None
@@ -581,21 +705,25 @@ class TransactionSet:
 		}
 
 		remit_service_lines_remarks_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'claim_service_line_id': service.service_identification.value
 			if service.service_identification else None,
-			# 'remit_service_line_key' Need more clarification
+			'remit_service_line_key': claim.claim.key + '_' + service.service.key,
 			'remark_code_list_qualifier': None,
 			'remark_code': None,
 			'created_at': None
 		}
 
 		service_line_rendering_providers_dict = {
+			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+			'remit_service_line_key': claim.claim.key + '_' + service.service.key,
 			'claim_service_line_id': service.service_identification.value
 			if service.service_identification else None,
-			'rendering_provider_qualifier': None,
-			'rendering_provider_id': None,
+			'rendering_provider_qualifier': service.rendering_provider.qualifier_code
+			if service.rendering_provider else None,
+			'rendering_provider_id': service.rendering_provider.identification if service.rendering_provider else None,
 			'created_at': None
 
 		}
@@ -607,64 +735,69 @@ class TransactionSet:
 	@staticmethod
 	def serialize_adjustment(
 			transaction: TransactionLoop,
-			# claim: ClaimLoop,
+			claim: ClaimLoop,
 			service: ServiceLoop,
 			adjustment: ServiceAdjustmentSegment
 	) -> dict[str, dict]:
 
-		remit_adjustments_dict = {
-			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
-			'adjustment_group_code': adjustment.group_code,
-			'adjustment_reason_code': adjustment.reason_code,
-			'adjustment_amount': adjustment.amount,
-			'adjustment_quantity': adjustment.quantity,
-			'adjustment_reason_code2': adjustment.reason_code2,
-			'adjustment_amount2': adjustment.amount2,
-			'adjustment_quantity2': adjustment.quantity2,
-			'adjustment_reason_code3': adjustment.reason_code3,
-			'adjustment_amount3': adjustment.amount3,
-			'adjustment_quantity3': adjustment.quantity3,
-			'adjustment_reason_code4': adjustment.reason_code4,
-			'adjustment_amount4': adjustment.amount4,
-			'adjustment_quantity4': adjustment.quantity4,
-			'adjustment_reason_code5': adjustment.reason_code5,
-			'adjustment_amount5': adjustment.amount5,
-			'adjustment_quantity5': adjustment.quantity5,
-			'adjustment_reason_code6': adjustment.reason_code6,
-			'adjustment_amount6': adjustment.amount6,
-			'adjustment_quantity6': adjustment.quantity6,
-
-		}
-
 		service_line_adjustments_dict = {
-
-			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
-			'claim_service_line_id': service.service_identification.value
-			if service.service_identification and service.service_identification.qualifier == '6R' else None,
-			'adjustment_group_code': adjustment.group_code,
-			'adjustment_reason_code': adjustment.reason_code,
-			'adjustment_amount': adjustment.amount,
-			'adjustment_quantity': adjustment.quantity,
-			'adjustment_reason_code2': adjustment.reason_code2,
-			'adjustment_amount2': adjustment.amount2,
-			'adjustment_quantity2': adjustment.quantity2,
-			'adjustment_reason_code3': adjustment.reason_code3,
-			'adjustment_amount3': adjustment.amount3,
-			'adjustment_quantity3': adjustment.quantity3,
-			'adjustment_reason_code4': adjustment.reason_code4,
-			'adjustment_amount4': adjustment.amount4,
-			'adjustment_quantity4': adjustment.quantity4,
-			'adjustment_reason_code5': adjustment.reason_code5,
-			'adjustment_amount5': adjustment.amount5,
-			'adjustment_quantity5': adjustment.quantity5,
-			'adjustment_reason_code6': adjustment.reason_code6,
-			'adjustment_amount6': adjustment.amount6,
-			'adjustment_quantity6': adjustment.quantity6,
+			'remit_key': None,
+			'edi_transaction_id_st02': None,
+			'claim_service_line_id': None,
+			'remit_service_line_key': None,
+			'adjustment_group_code': None,
+			'adjustment_reason_code': None,
+			'adjustment_amount': None,
+			'adjustment_quantity': None,
+			'adjustment_reason_code2': None,
+			'adjustment_amount2': None,
+			'adjustment_quantity2': None,
+			'adjustment_reason_code3': None,
+			'adjustment_amount3': None,
+			'adjustment_quantity3': None,
+			'adjustment_reason_code4': None,
+			'adjustment_amount4': None,
+			'adjustment_quantity4': None,
+			'adjustment_reason_code5': None,
+			'adjustment_amount5': None,
+			'adjustment_quantity5': None,
+			'adjustment_reason_code6': None,
+			'adjustment_amount6': None,
+			'adjustment_quantity6': None,
 			'created_at': None
+								}
 
-		}
-		return {'remit_adjustments_dict': remit_adjustments_dict,
-										'service_line_adjustments_dict': service_line_adjustments_dict}
+		if adjustment:
+
+			service_line_adjustments_dict.update({
+				'remit_key': claim.claim.key,
+				'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+				'claim_service_line_id': service.service_identification.value
+				if service.service_identification else None,
+				'remit_service_line_key': claim.claim.key + '_' + service.service.key,
+				'adjustment_group_code': adjustment.group_code,
+				'adjustment_reason_code': adjustment.reason_code,
+				'adjustment_amount': adjustment.amount,
+				'adjustment_quantity': adjustment.quantity,
+				'adjustment_reason_code2': adjustment.reason_code2,
+				'adjustment_amount2': adjustment.amount2,
+				'adjustment_quantity2': adjustment.quantity2,
+				'adjustment_reason_code3': adjustment.reason_code3,
+				'adjustment_amount3': adjustment.amount3,
+				'adjustment_quantity3': adjustment.quantity3,
+				'adjustment_reason_code4': adjustment.reason_code4,
+				'adjustment_amount4': adjustment.amount4,
+				'adjustment_quantity4': adjustment.quantity4,
+				'adjustment_reason_code5': adjustment.reason_code5,
+				'adjustment_amount5': adjustment.amount5,
+				'adjustment_quantity5': adjustment.quantity5,
+				'adjustment_reason_code6': adjustment.reason_code6,
+				'adjustment_amount6': adjustment.amount6,
+				'adjustment_quantity6': adjustment.quantity6,
+				'created_at': None
+
+			})
+		return {'service_line_adjustments_dict': service_line_adjustments_dict}
 
 	@classmethod
 	def build(cls, file_path: str) -> 'TransactionSet':
@@ -676,7 +809,7 @@ class TransactionSet:
 
 		segments = file.split('~')
 		segments = [segment.strip() for segment in segments]
-
+		segments = [f'{index}:{segment}' for index, segment in enumerate(segments)]
 		segments = iter(segments)
 		segment = None
 
@@ -725,9 +858,29 @@ class TransactionSet:
 			transaction, segments, segment = TransactionLoop.build(segment, segments)
 			return BuildAttributeResponse('transaction', transaction, segment, segments)
 
-
 		else:
 			return BuildAttributeResponse(None, None, None, segments)
+
+	def count_claims(self) -> int:
+		count = 0
+		for transaction in self.transactions:
+			count += len(transaction.claims)
+
+		return count
+
+	def count_transactions(self) -> int:
+		count = 0
+		count += len(self.transactions)
+
+		return count
+
+	def count_services(self) -> int:
+		count = 0
+		for transaction in self.transactions:
+			for claim in transaction.claims:
+				count += len(claim.services)
+
+		return count
 
 
 if __name__ == '__main__':

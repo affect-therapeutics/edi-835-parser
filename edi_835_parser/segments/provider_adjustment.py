@@ -1,6 +1,5 @@
 from edi_835_parser.elements.identifier import Identifier
 from edi_835_parser.elements.date import Date
-from edi_835_parser.elements.dollars import Dollars
 from edi_835_parser.segments.utilities import split_segment, get_element
 from edi_835_parser.elements.provider_adjustment_id import ProviderAdjustmentID
 from edi_835_parser.elements.provider_adjustment_reason_code import ProviderAdjustmentReasonCode
@@ -11,12 +10,6 @@ class ProviderAdjustment:
 
 	identifier = Identifier()
 	fiscal_period_date = Date()
-	amount1 = Dollars()
-	amount2 = Dollars()
-	amount3 = Dollars()
-	amount4 = Dollars()
-	amount5 = Dollars()
-	amount6 = Dollars()
 	reason_code1 = ProviderAdjustmentReasonCode()
 	reason_code2 = ProviderAdjustmentReasonCode()
 	reason_code3 = ProviderAdjustmentReasonCode()
@@ -31,6 +24,9 @@ class ProviderAdjustment:
 	id6 = ProviderAdjustmentID()
 
 	def __init__(self, segment: str):
+		self.index = segment.split(':', 1)[0]
+		segment = segment.split(':', 1)[1]
+
 		self.segment = segment
 		segment = split_segment(segment)
 

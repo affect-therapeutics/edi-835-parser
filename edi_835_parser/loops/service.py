@@ -5,11 +5,10 @@ from edi_835_parser.segments.claim import Claim as ClaimSegment
 from edi_835_parser.segments.date import Date as DateSegment
 from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.amount import Amount as AmountSegment
-from edi_835_parser.segments.service_adjustment import ServiceAdjustment as ServiceAdjustmentSegment
+from edi_835_parser.segments.adjustment import Adjustment as ServiceAdjustmentSegment
 from edi_835_parser.segments.remark import Remark as RemarkSegment
 from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
-from edi_835_parser.elements.dollars import Dollars
 
 from log_conf import Logger
 
@@ -42,7 +41,7 @@ class Service:
 		return '\n'.join(str(item) for item in self.__dict__.items())
 
 	@property
-	def allowed_amount(self) -> Optional[Dollars]:
+	def allowed_amount(self):
 		if self.amount:
 			if self.amount.qualifier == 'allowed - actual':
 				return self.amount.amount
@@ -77,7 +76,7 @@ class Service:
 
 	@property
 	def service_identification(self) -> Optional[ReferenceSegment]:
-		service_id = [r for r in self.references if r.qualifier == '6R']
+		service_id = [r for r in self.references if r.qualifier == 'provider control number']
 		assert len(service_id) <= 1
 
 		if len(service_id) == 1:
@@ -85,8 +84,8 @@ class Service:
 
 	@property
 	def rendering_provider(self) -> Optional[ReferenceSegment]:
-		rendering_provider_qualifier = ['OB', '1A', '1B', '1C', '1D', '1G', '1H', '1J', 'D3', 'G2', 'HPI', 'SY']
-		rendering_provider = [r for r in self.references if r.qualifier in rendering_provider_qualifier]
+		rendering_provider_qualifier_code = ['OB', '1A', '1B', '1C', '1D', '1G', '1H', '1J', 'D3', 'G2', 'HPI', 'SY']
+		rendering_provider = [r for r in self.references if r.qualifier_code in rendering_provider_qualifier_code]
 		assert len(rendering_provider) <= 1
 
 		if len(rendering_provider) == 1:

@@ -1,5 +1,4 @@
 from edi_835_parser.elements.identifier import Identifier
-from edi_835_parser.elements.dollars import Dollars
 from edi_835_parser.segments.utilities import split_segment, get_element
 
 
@@ -7,18 +6,11 @@ class InpatientAdjudication:
 	identification = 'MIA'
 
 	identifier = Identifier()
-	pps_operating_outlier_amount = Dollars()
-	claim_drg_amount = Dollars()
-	claim_disproportionate_share_amount = Dollars()
-	claim_msp_pass_though_amount = Dollars()
-	claim_pps_capital_amount = Dollars()
-	pps_capital_ime_amount = Dollars()
-	pps_operating_federal_specific_drg_amount = Dollars()
-	claim_pps_capital_outlier_amount = Dollars()
-	claim_indirect_teaching_amount = Dollars()
-	non_payable_professional_component_amount = Dollars()
 
 	def __init__(self, segment: str):
+		self.index = segment.split(':', 1)[0]
+		segment = segment.split(':', 1)[1]
+
 		self.segment = segment
 		segment = split_segment(segment)
 
@@ -27,6 +19,7 @@ class InpatientAdjudication:
 		self.pps_operating_outlier_amount = get_element(segment, 2)
 		self.lifetime_psychiatric_days_count = get_element(segment, 3)
 		self.claim_drg_amount = get_element(segment, 4)
+		self.claim_payment_remark_code = get_element(segment, 5)
 		self.claim_disproportionate_share_amount = get_element(segment, 6)
 		self.claim_msp_pass_though_amount = get_element(segment, 7)
 		self.claim_pps_capital_amount = get_element(segment, 8)
@@ -41,11 +34,11 @@ class InpatientAdjudication:
 		self.claim_pps_capital_outlier_amount = get_element(segment, 17)
 		self.claim_indirect_teaching_amount = get_element(segment, 18)
 		self.non_payable_professional_component_amount = get_element(segment, 19)
-		self.claim_payment_remark_code = get_element(segment, 20)
-		self.remark_code1 = get_element(segment, 21)
-		self.remark_code2 = get_element(segment, 22)
-		self.remark_code3 = get_element(segment, 23)
-		self.remark_code4 = get_element(segment, 24)
+		self.remark_code1 = get_element(segment, 20)
+		self.remark_code2 = get_element(segment, 21)
+		self.remark_code3 = get_element(segment, 22)
+		self.remark_code4 = get_element(segment, 23)
+		self.pps_capital_exception_amount = get_element(segment, 24)
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())

@@ -10,6 +10,7 @@ from edi_835_parser.segments.inpatient_adjudication import InpatientAdjudication
 from edi_835_parser.segments.outpatient_adjudication import OutpatientAdjudication as OutpatientAdjudicationSegment
 from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 from edi_835_parser.loops.service import Service as ServiceLoop
+from edi_835_parser.segments.adjustment import Adjustment as ClaimAdjustmentSegment
 
 
 from log_conf import Logger
@@ -31,7 +32,8 @@ class Claim:
 			dates: List[DateSegment] = None,
 			amount: AmountSegment = None,
 			inpatient: InpatientAdjudicationSegment = None,
-			outpatient: OutpatientAdjudicationSegment = None
+			outpatient: OutpatientAdjudicationSegment = None,
+			adjustment: ClaimAdjustmentSegment = None
 	):
 		self.claim = claim
 		self.entities = entities if entities else []
@@ -41,6 +43,7 @@ class Claim:
 		self.amount = amount
 		self.inpatient = inpatient
 		self.outpatient = outpatient
+		self.adjustment = adjustment
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
@@ -107,11 +110,8 @@ class Claim:
 	@property
 	def claim_contract_code(self) -> Optional[ReferenceSegment]:
 		contract_code = [r for r in self.references if r.qualifier == 'contract code']
-		assert len(contract_code) <= 1
-
-		if len(contract_code) == 1:
+		if len(contract_code) >= 1:
 			return contract_code[0]
-
 
 	@property
 	def patient(self) -> EntitySegment:
@@ -165,6 +165,11 @@ class Claim:
 				elif identifier == OutpatientAdjudicationSegment.identification:
 					outpatient = OutpatientAdjudicationSegment(segment)
 					claim.outpatient = outpatient
+					segment = None
+
+				elif identifier == ClaimAdjustmentSegment.identification:
+					adjustment = ClaimAdjustmentSegment(segment)
+					claim.adjustment = adjustment
 					segment = None
 
 				elif identifier in cls.terminating_identifiers:

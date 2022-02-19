@@ -1,12 +1,10 @@
 import os
 from typing import List
-import logging.config
 
 from edi_835_parser.transaction_set.transaction_set import TransactionSet
 
-# logging.config.fileConfig(fname='edi_835_parser/logging.conf')
-# logger = logging.getLogger()
 from log_conf import Logger
+
 
 def parse(path: str, debug: bool=False) -> TransactionSet:
 	if path[0] == '~':
@@ -33,45 +31,9 @@ def parse(path: str, debug: bool=False) -> TransactionSet:
 def find_edi_835_files(path: str) -> List[str]:
 	files = []
 	for file in os.listdir(path):
-		if file.endswith('.txt'):
-			files.append(file)
+		files.append(file)
 
 	return files
-
-
-def sum_payments(self) -> float:
-	amount = 0
-	for transaction_set in self:
-		amount += transaction_set.financial_information.amount_paid
-
-	return amount
-
-
-def count_claims(self) -> int:
-	count = 0
-	for transaction_set in self:
-		count += len(transaction_set.claims)
-
-	return count
-
-
-def count_patients(self) -> int:
-	patients = []
-	for transaction_set in self:
-		for claim in transaction_set.claims:
-			patient = claim.patient
-			patients.append(patient.identification_code)
-
-	patients = set(patients)
-	return len(patients)
-
-
-def count_transactions(self) -> int:
-	count = 0
-	for transaction_set in self:
-		count += len(transaction_set.transactions)
-
-	return count
 
 
 if __name__ == '__main__':

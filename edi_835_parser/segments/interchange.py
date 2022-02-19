@@ -15,6 +15,9 @@ class Interchange:
 	transmission_date = Date()
 
 	def __init__(self, segment: str):
+		self.index = segment.split(':', 1)[0]
+		segment = segment.split(':', 1)[1]
+
 		self.segment = segment
 		segment = split_segment(segment)
 

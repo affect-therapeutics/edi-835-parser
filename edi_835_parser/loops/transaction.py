@@ -12,6 +12,7 @@ from edi_835_parser.segments.financial_information import FinancialInformation a
 from edi_835_parser.segments.trace_number import TraceNumber as TraceNumberSegment
 from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
+from edi_835_parser.segments.provider_summary import ProviderSummary as ProviderSummarySegment
 
 from log_conf import Logger
 
@@ -29,6 +30,7 @@ class Transaction:
             financial_information: FinancialInformationSegment = None,
             trace_number: TraceNumberSegment = None,
             provider_adjustment: ProviderAdjustmentSegment = None,
+            provider_summary: ProviderSummarySegment = None,
             claims: List[ClaimLoop] = None,
             organizations: List[OrganizationLoop] = None
     ):
@@ -36,6 +38,7 @@ class Transaction:
         self.financial_information = financial_information
         self.trace_number = trace_number
         self.provider_adjustment = provider_adjustment
+        self.provider_summary = provider_summary
         self.claims = claims if claims else []
         self.organizations = organizations if organizations else []
 
@@ -73,10 +76,20 @@ class Transaction:
     def payer_contact_web(self) -> Optional[PayerContactSegment]:
         payer = [c for c in self.organizations if c.organization.type == 'payer']
         assert len(payer) == 1
-        contact_business = [a for a in payer[0].contacts if a.code == 'information_contact']
-        assert len(contact_business) <= 1
-        if len(contact_business) == 1:
-            return contact_business[0]
+        contact_web = [a for a in payer[0].contacts if a.code == 'information_contact']
+        assert len(contact_web) <= 1
+        if len(contact_web) == 1:
+            return contact_web[0]
+
+    @property
+    def payer_contact_technical(self) -> Optional[PayerContactSegment]:
+        payer = [c for c in self.organizations if c.organization.type == 'payer']
+        assert len(payer) == 1
+        contact_technical = [a for a in payer[0].contacts if a.code == 'technical_contact']
+        assert len(contact_technical) <= 1
+        if len(contact_technical) == 1:
+            return contact_technical[0]
+
 
     @property
     def payee(self) -> OrganizationSegment:
@@ -86,10 +99,30 @@ class Transaction:
 
     @property
     def payee_identification(self) -> Optional[ReferenceSegment]:
-            payee_id = [c for c in self.organizations if c.organization.type == 'payee' and c.additional_id]
-            assert len(payee_id) <= 1
-            if len(payee_id) == 1:
-                return payee_id[0].additional_id
+        payee_id = [c for c in self.organizations if c.organization.type == 'payee']
+        for a in payee_id:
+            for ref in a.references:
+                if ref.qualifier == 'federal taxpayer identification number':
+                    return ref
+
+    @property
+    def other_payee_identification(self) -> Optional[ReferenceSegment]:
+        payee_id = [c for c in self.organizations if c.organization.type == 'payee' and c.references != []]
+        assert len(payee_id) <= 1
+        if len(payee_id) == 1:
+            for a in payee_id:
+                for ref in a.references:
+                    if ref.qualifier == 'payee identification':
+                        return ref
+
+    @property
+    def payer_identification(self) -> Optional[ReferenceSegment]:
+        payer_id = [c for c in self.organizations if c.organization.type == 'payer' and c.references != []]
+        assert len(payer_id) <= 1
+        if len(payer_id) == 1:
+            for a in payer_id:
+                for ref in a.references:
+                    return ref
 
     @classmethod
     def build(cls, segment: str, segments: Iterator[str]) -> Tuple['Transaction', Optional[Iterator[str]], Optional[str]]:
@@ -125,6 +158,11 @@ class Transaction:
                 elif identifier == ProviderAdjustmentSegment.identification:
                     provider_adjustment = ProviderAdjustmentSegment(segment)
                     transaction.provider_adjustment = provider_adjustment
+                    segment = None
+
+                elif identifier == ProviderSummarySegment.identification:
+                    provider_summary = ProviderSummarySegment(segment)
+                    transaction.provider_summary = provider_summary
                     segment = None
 
                 elif identifier in cls.terminating_identifiers:

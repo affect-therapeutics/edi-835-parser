@@ -1,7 +1,6 @@
 from edi_835_parser.elements.identifier import Identifier
 from edi_835_parser.elements.entity_code import EntityCode
 from edi_835_parser.elements.entity_type import EntityType
-from edi_835_parser.elements.identification_code_qualifier import IdentificationCodeQualifier
 from edi_835_parser.segments.utilities import split_segment, get_element
 
 
@@ -11,15 +10,19 @@ class Entity:
 	identifier = Identifier()
 	entity = EntityCode()
 	type = EntityType()
-	identification_code_qualifier = IdentificationCodeQualifier()
 
 	def __init__(self, segment: str):
+		self.index = segment.split(':', 1)[0]
+		segment = segment.split(':', 1)[1]
+
 		self.segment = segment
 		segment = split_segment(segment)
 
 		self.identifier = segment[0]
 		self.entity = segment[1]
+		self.entity_code = segment[1]
 		self.type = segment[2]
+		self.type_code = segment[2]
 		self.last_name = get_element(segment, 3)
 		self.first_name = get_element(segment, 4)
 		self.middle_name = get_element(segment, 5)
@@ -34,7 +37,7 @@ class Entity:
 
 	@property
 	def name(self) -> str:
-		return f'{self.first_name} {self.last_name}'.title()
+		return f'{self.first_name} {self.last_name}'.strip().upper()
 
 
 if __name__ == '__main__':

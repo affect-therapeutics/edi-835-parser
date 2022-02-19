@@ -1,5 +1,4 @@
 from edi_835_parser.elements.identifier import Identifier
-from edi_835_parser.elements.dollars import Dollars
 from edi_835_parser.segments.utilities import split_segment, get_element
 
 
@@ -7,13 +6,17 @@ class OutpatientAdjudication:
 	identification = 'MOA'
 
 	identifier = Identifier()
-	claim_esrd_payment_amount = Dollars()
 
 	def __init__(self, segment: str):
+		self.index = segment.split(':', 1)[0]
+		segment = segment.split(':', 1)[1]
+
 		self.segment = segment
 		segment = split_segment(segment)
 
 		self.identifier = segment[0]
+		self.reimbursement_rate = segment[1],
+		self.claim_hcpcs_payment_amount = segment[2]
 		self.remark_code1 = get_element(segment, 3)
 		self.remark_code2 = get_element(segment, 4)
 		self.remark_code3 = get_element(segment, 5)

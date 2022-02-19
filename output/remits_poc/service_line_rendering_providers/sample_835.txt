@@ -1,0 +1,2 @@
+file_name|remit_key|edi_transaction_id_st02|remit_service_line_key|claim_service_line_id|rendering_provider_qualifier|rendering_provider_id|created_at
+sample_835.txt|||||||
