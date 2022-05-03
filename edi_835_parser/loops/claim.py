@@ -30,7 +30,7 @@ class Claim:
 			amount: AmountSegment = None,
 			inpatient: InpatientAdjudicationSegment = None,
 			outpatient: OutpatientAdjudicationSegment = None,
-			adjustment: ClaimAdjustmentSegment = None
+			adjustments: List[ClaimAdjustmentSegment] = None
 	):
 		self.claim = claim
 		self.entities = entities if entities else []
@@ -40,7 +40,7 @@ class Claim:
 		self.amount = amount
 		self.inpatient = inpatient
 		self.outpatient = outpatient
-		self.adjustment = adjustment
+		self.adjustments = adjustments if adjustments else []
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
@@ -166,7 +166,7 @@ class Claim:
 
 				elif identifier == ClaimAdjustmentSegment.identification:
 					adjustment = ClaimAdjustmentSegment(segment)
-					claim.adjustment = adjustment
+					claim.adjustments.append(adjustment)
 					segment = None
 
 				elif identifier in cls.terminating_identifiers:
