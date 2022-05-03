@@ -13,9 +13,6 @@ from edi_835_parser.loops.service import Service as ServiceLoop
 from edi_835_parser.segments.adjustment import Adjustment as ClaimAdjustmentSegment
 
 
-from log_conf import Logger
-
-
 class Claim:
 	initiating_identifier = ClaimSegment.identification
 	terminating_identifiers = [
@@ -177,8 +174,6 @@ class Claim:
 
 				else:
 					segment = None
-					message = f'Identifier: {identifier} not handled in claim loop.'
-					Logger.logr.warning(message)
 
 			except StopIteration:
 				return claim, None, None

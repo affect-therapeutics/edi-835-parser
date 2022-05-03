@@ -3,8 +3,6 @@ from typing import List
 
 from edi_835_parser.transaction_set.transaction_set import TransactionSet
 
-from log_conf import Logger
-
 
 def parse(path: str, debug: bool=False) -> TransactionSet:
 	if path[0] == '~':
@@ -21,7 +19,8 @@ def parse(path: str, debug: bool=False) -> TransactionSet:
 				try:
 					transaction_set = TransactionSet.build(file_path)
 				except:
-					Logger.logr.error(f'Failed to build a transaction set from {file_path}')
+					continue
+
 	else:
 		transaction_set = TransactionSet.build(path)
 

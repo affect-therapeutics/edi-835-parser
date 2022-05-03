@@ -14,8 +14,6 @@ from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 from edi_835_parser.segments.provider_summary import ProviderSummary as ProviderSummarySegment
 
-from log_conf import Logger
-
 
 class Transaction:
     initiating_identifier = TransactionSegment.identification
@@ -170,8 +168,6 @@ class Transaction:
 
                 else:
                     segment = None
-                    message = f'Identifier: {identifier} not handled in transaction loop.'
-                    Logger.logr.warning(message)
 
             except StopIteration:
                 return transaction, None, None

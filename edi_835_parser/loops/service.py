@@ -10,8 +10,6 @@ from edi_835_parser.segments.remark import Remark as RemarkSegment
 from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 
-from log_conf import Logger
-
 
 class Service:
 	initiating_identifier = ServiceSegment.identification
@@ -124,9 +122,6 @@ class Service:
 				elif identifier in cls.terminating_identifiers:
 					return service, segment, segments
 
-				else:
-					message = f'Identifier: {identifier} not handled in service loop.'
-					Logger.logr.warning(message)
 
 			except StopIteration:
 				return service, None, None

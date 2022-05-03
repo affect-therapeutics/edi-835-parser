@@ -11,8 +11,6 @@ from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.interchange import Interchange as InterchangeSegment
 from edi_835_parser.segments.adjustment import Adjustment as ServiceAdjustmentSegment
 
-from log_conf import Logger
-
 BuildAttributeResponse = namedtuple('BuildAttributeResponse', 'key value segment segments')
 
 
@@ -32,8 +30,6 @@ class TransactionSet:
 	def build_remits(self) -> pd.DataFrame:
 		"""flatten the remittance advice by claim to a pandas DataFrame"""
 
-		Logger.logr.info("Building remits DataFrame")
-
 		remits_data = []
 
 		for transaction in self.transactions:
@@ -49,8 +45,6 @@ class TransactionSet:
 
 	def build_remit_payers(self) -> pd.DataFrame:
 		"""flatten the remittance advice payers by claim to a pandas DataFrame"""
-
-		Logger.logr.info("Building remits_payers DataFrame")
 
 		remit_payers_data = []
 
@@ -68,8 +62,6 @@ class TransactionSet:
 	def build_payment_fin_info(self) -> pd.DataFrame:
 		"""flatten the remittance payment financial info by transaction to a pandas DataFrame"""
 
-		Logger.logr.info("Building payment_fin_info DataFrame")
-
 		remit_financial_info_df = []
 
 		for transaction in self.transactions:
@@ -84,8 +76,6 @@ class TransactionSet:
 
 	def build_remit_service_lines(self) -> pd.DataFrame:
 		"""flatten the remittance advice by service lines to a pandas DataFrame"""
-
-		Logger.logr.info("Building remit_service_lines DataFrame")
 		remit_service_lines_df = []
 
 		for transaction in self.transactions:
@@ -103,8 +93,6 @@ class TransactionSet:
 
 	def build_remit_adjustments(self) -> pd.DataFrame:
 		"""flatten the remittance advice by service lines to a pandas DataFrame"""
-
-		Logger.logr.info("Building remit_adjustments DataFrame")
 		remit_adjustments_data = []
 
 		for transaction in self.transactions:
@@ -118,8 +106,6 @@ class TransactionSet:
 
 	def build_service_line_adjustments(self) -> pd.DataFrame:
 		"""flatten the remittance advice by service lines adjustments to a pandas DataFrame"""
-
-		Logger.logr.info("Building remit_adjustments DataFrame")
 		service_line_adjustments_data = []
 
 		for transaction in self.transactions:
@@ -164,8 +150,6 @@ class TransactionSet:
 
 	def build_service_line_remarks(self) -> pd.DataFrame:
 		"""flatten the remittance remarks by service line to a pandas DataFrame"""
-
-		Logger.logr.info("Building service_line_remarks DataFrame")
 		service_line_remarks_data = []
 
 		for transaction in self.transactions:
@@ -196,8 +180,6 @@ class TransactionSet:
 
 	def build_service_line_rendering_providers(self) -> pd.DataFrame:
 		"""flatten the remittance rendering_providers by service line to a pandas DataFrame"""
-
-		Logger.logr.info("Building service_line_remarks DataFrame")
 		rendering_providers_data = []
 
 		for transaction in self.transactions:
@@ -225,7 +207,6 @@ class TransactionSet:
 	def build_remit_remarks_adjudications(self) -> pd.DataFrame:
 		"""flatten the remittance advice by inpatient/outpatient adjudication info to a pandas DataFrame"""
 
-		Logger.logr.info("Building remit_remarks_adjudications DataFrame")
 		remit_remarks_adjudications_data = []
 
 		for transaction in self.transactions:
@@ -239,7 +220,6 @@ class TransactionSet:
 	def build_provider_adjustments(self) -> pd.DataFrame:
 		"""flatten the remittance advice by provider adjustment info to a pandas DataFrame"""
 
-		Logger.logr.info("Building provider_adjustments DataFrame")
 		provider_adjustments_data = []
 
 		for transaction in self.transactions:

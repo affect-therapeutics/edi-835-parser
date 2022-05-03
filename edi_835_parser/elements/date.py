@@ -3,8 +3,6 @@ from datetime import datetime
 import logging.config
 from edi_835_parser.elements import Element
 
-from log_conf import Logger
-
 class Date(Element):
 
 	def parser(self, value: str) -> Union[datetime, str]:
@@ -17,5 +15,4 @@ class Date(Element):
 			return datetime(year, month, day)
 
 		else:
-			Logger.logr.warning(f'Unable to parse {value} into a datetime')
 			return value

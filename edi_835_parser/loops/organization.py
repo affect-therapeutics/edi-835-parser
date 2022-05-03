@@ -10,8 +10,6 @@ from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.provider_summary import ProviderSummary as ProviderSummarySegment
 from edi_835_parser.segments.utilities import find_identifier
 
-from log_conf import Logger
-
 
 class Organization:
 	initiating_identifier = OrganizationSegment.identification
@@ -75,8 +73,6 @@ class Organization:
 
 				else:
 					segment = None
-					message = f'Identifier: {identifier} not handled in organization loop.'
-					Logger.logr.warning(message)
 
 			except StopIteration:
 				return organization, None, None
