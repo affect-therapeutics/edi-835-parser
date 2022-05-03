@@ -1,4 +1,4 @@
-from typing import List, Iterator, Optional
+from typing import Dict, List, Iterator, Optional
 from collections import namedtuple
 
 import pandas as pd
@@ -235,7 +235,7 @@ class TransactionSet:
 	def serialize_claim(
 			claim: ClaimLoop,
 			transaction: TransactionLoop
-	) -> dict[str, dict]:
+	) -> Dict[str, dict]:
 
 		remits_dict = {
 			'remit_key': claim.claim.key,
@@ -535,7 +535,7 @@ class TransactionSet:
 	@staticmethod
 	def serialize_transaction(
 			transaction: TransactionLoop
-	) -> dict[str, dict]:
+	) -> Dict[str, dict]:
 
 		remit_financial_info_dict = {
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
@@ -636,7 +636,7 @@ class TransactionSet:
 			transaction: TransactionLoop,
 			claim: ClaimLoop,
 			service: ServiceLoop
-	) -> dict[str, dict]:
+	) -> Dict[str, dict]:
 
 		# if the service doesn't have a start date assume the service and claim dates match
 		start_date = None
@@ -718,7 +718,7 @@ class TransactionSet:
 			claim: ClaimLoop,
 			service: ServiceLoop,
 			adjustment: ServiceAdjustmentSegment
-	) -> dict[str, dict]:
+	) -> Dict[str, dict]:
 
 		service_line_adjustments_dict = {
 			'remit_key': None,
