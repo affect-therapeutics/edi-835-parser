@@ -15,8 +15,8 @@ class OutpatientAdjudication:
 		segment = split_segment(segment)
 
 		self.identifier = segment[0]
-		self.reimbursement_rate = segment[1],
-		self.claim_hcpcs_payment_amount = segment[2]
+		self.reimbursement_rate = get_element(segment, 1)
+		self.claim_hcpcs_payment_amount = get_element(segment, 2)
 		self.remark_code1 = get_element(segment, 3)
 		self.remark_code2 = get_element(segment, 4)
 		self.remark_code3 = get_element(segment, 5)
