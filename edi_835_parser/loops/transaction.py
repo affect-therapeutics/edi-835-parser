@@ -27,7 +27,7 @@ class Transaction:
             transaction: TransactionSegment = None,
             financial_information: FinancialInformationSegment = None,
             trace_number: TraceNumberSegment = None,
-            provider_adjustment: ProviderAdjustmentSegment = None,
+            provider_adjustments: List[ProviderAdjustmentSegment] = None,
             provider_summary: ProviderSummarySegment = None,
             claims: List[ClaimLoop] = None,
             organizations: List[OrganizationLoop] = None
@@ -35,7 +35,7 @@ class Transaction:
         self.transaction = transaction
         self.financial_information = financial_information
         self.trace_number = trace_number
-        self.provider_adjustment = provider_adjustment
+        self.provider_adjustments = provider_adjustments if provider_adjustments else []
         self.provider_summary = provider_summary
         self.claims = claims if claims else []
         self.organizations = organizations if organizations else []
@@ -155,7 +155,7 @@ class Transaction:
 
                 elif identifier == ProviderAdjustmentSegment.identification:
                     provider_adjustment = ProviderAdjustmentSegment(segment)
-                    transaction.provider_adjustment = provider_adjustment
+                    transaction.provider_adjustments.append(provider_adjustment)
                     segment = None
 
                 elif identifier == ProviderSummarySegment.identification:
