@@ -3,6 +3,7 @@ from typing import Iterator, Tuple, Optional, List
 from edi_835_parser.loops.claim import Claim as ClaimLoop
 from edi_835_parser.loops.organization import Organization as OrganizationLoop
 from edi_835_parser.segments.utilities import find_identifier
+from edi_835_parser.segments.date import Date as DateSegment
 from edi_835_parser.segments.transaction import Transaction as TransactionSegment
 from edi_835_parser.segments.organization import Organization as OrganizationSegment
 from edi_835_parser.segments.location import Location as LocationSegment
@@ -29,6 +30,7 @@ class Transaction:
             trace_number: TraceNumberSegment = None,
             provider_adjustments: List[ProviderAdjustmentSegment] = None,
             provider_summary: ProviderSummarySegment = None,
+            date: DateSegment = None,
             claims: List[ClaimLoop] = None,
             organizations: List[OrganizationLoop] = None
     ):
@@ -37,6 +39,7 @@ class Transaction:
         self.trace_number = trace_number
         self.provider_adjustments = provider_adjustments if provider_adjustments else []
         self.provider_summary = provider_summary
+        self.date = date
         self.claims = claims if claims else []
         self.organizations = organizations if organizations else []
 
@@ -161,6 +164,11 @@ class Transaction:
                 elif identifier == ProviderSummarySegment.identification:
                     provider_summary = ProviderSummarySegment(segment)
                     transaction.provider_summary = provider_summary
+                    segment = None
+
+                elif identifier == DateSegment.identification:
+                    date = DateSegment(segment)
+                    transaction.date = date
                     segment = None
 
                 elif identifier in cls.terminating_identifiers:
