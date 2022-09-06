@@ -6,6 +6,7 @@ from edi_835_parser.segments.claim import Claim as ClaimSegment
 from edi_835_parser.segments.address import Address as AddressSegment
 from edi_835_parser.segments.location import Location as LocationSegment
 from edi_835_parser.segments.payer_contact import PayerContact as PayerContactSegment
+from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.provider_summary import ProviderSummary as ProviderSummarySegment
 from edi_835_parser.segments.utilities import find_identifier
@@ -17,6 +18,7 @@ class Organization:
 		'LX',
 		ProviderSummarySegment.identification,
 		ClaimSegment.identification,
+		ProviderAdjustmentSegment.identification,
 		OrganizationSegment.identification,
 		'SE'
 	]
