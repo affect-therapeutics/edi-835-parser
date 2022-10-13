@@ -780,14 +780,11 @@ class TransactionSet:
 		return {'service_line_adjustments_dict': service_line_adjustments_dict}
 
 	@classmethod
-	def build(cls, file_path: str) -> 'TransactionSet':
+	def build_from_string(cls, edi_file_string: str) -> 'TransactionSet':
 		interchange = None
 		transactions = []
 
-		with open(file_path) as f:
-			file = f.read()
-
-		segments = file.split('~')
+		segments = edi_file_string.split('~')
 		segments = [segment.strip() for segment in segments]
 		segments = [f'{index}:{segment}' for index, segment in enumerate(segments)]
 		segments = iter(segments)
@@ -811,6 +808,12 @@ class TransactionSet:
 			# if response.key in cls.terminating_identifiers:
 
 		return TransactionSet(interchange, transactions)
+
+	@classmethod
+	def build(cls, file_path: str) -> 'TransactionSet':
+		with open(file_path) as f:
+			file_contents = f.read()
+		return cls.build_from_string(file_contents)
 
 	@classmethod
 	def build_attribute(cls, segment: Optional[str], segments: Iterator[str]) -> BuildAttributeResponse:
