@@ -28,7 +28,7 @@ def parse(path: str, debug: bool=False) -> TransactionSet:
 
 
 def parse_edi_string(edi_file_string) -> TransactionSet:
-	return TransactionSet.build_from_string(edi_string)
+	return TransactionSet.build_from_string(edi_file_string)
 
 
 def find_edi_835_files(path: str) -> List[str]:
