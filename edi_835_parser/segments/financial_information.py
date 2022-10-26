@@ -23,13 +23,13 @@ class FinancialInformation:
 		self.amount_paid = segment[2]
 		self.credit_debit_flag = segment[3]
 		self.payment_method = segment[4]
-		self.payment_format = segment[5]
+		self.payment_format = get_element(segment, 5)
 		self.id_qualifier = get_element(segment, 6)
 		self.id = get_element(segment, 7)
 		self.acc_qualifier = get_element(segment, 8)
 		self.sender_acc_no = get_element(segment, 9)
-		self.routing_number = segment[13]
-		self.transaction_date = segment[16]
+		self.routing_number = get_element(segment, 13)
+		self.transaction_date = get_element(segment, 16)
 		self.payer_id = get_element(segment, 10)
 		self.account_no_qualifier = get_element(segment, 14)
 		self.receiver_or_provider_acc_no = get_element(segment, 15)

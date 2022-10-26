@@ -13,9 +13,6 @@ from edi_835_parser.loops.service import Service as ServiceLoop
 from edi_835_parser.segments.adjustment import Adjustment as ClaimAdjustmentSegment
 
 
-from log_conf import Logger
-
-
 class Claim:
 	initiating_identifier = ClaimSegment.identification
 	terminating_identifiers = [
@@ -33,7 +30,7 @@ class Claim:
 			amount: AmountSegment = None,
 			inpatient: InpatientAdjudicationSegment = None,
 			outpatient: OutpatientAdjudicationSegment = None,
-			adjustment: ClaimAdjustmentSegment = None
+			adjustments: List[ClaimAdjustmentSegment] = None
 	):
 		self.claim = claim
 		self.entities = entities if entities else []
@@ -43,7 +40,7 @@ class Claim:
 		self.amount = amount
 		self.inpatient = inpatient
 		self.outpatient = outpatient
-		self.adjustment = adjustment
+		self.adjustments = adjustments if adjustments else []
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
@@ -169,7 +166,7 @@ class Claim:
 
 				elif identifier == ClaimAdjustmentSegment.identification:
 					adjustment = ClaimAdjustmentSegment(segment)
-					claim.adjustment = adjustment
+					claim.adjustments.append(adjustment)
 					segment = None
 
 				elif identifier in cls.terminating_identifiers:
@@ -177,8 +174,6 @@ class Claim:
 
 				else:
 					segment = None
-					message = f'Identifier: {identifier} not handled in claim loop.'
-					Logger.logr.warning(message)
 
 			except StopIteration:
 				return claim, None, None
