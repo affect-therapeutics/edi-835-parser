@@ -29,6 +29,7 @@ class Service:
 		self.modifier = segment[1]
 		self.charge_amount = segment[2]
 		self.paid_amount = segment[3]
+		self.revenue_code = get_element(segment, 4)
 
 		# assume unit count of one if unit not provided
 		default = 0 if self.paid_amount == 0 else 1

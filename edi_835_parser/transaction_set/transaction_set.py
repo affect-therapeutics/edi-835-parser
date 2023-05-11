@@ -37,7 +37,6 @@ class TransactionSet:
 						claim,
 						service,
 						transaction
-
 					)
 
 					for index, adjustment in enumerate(service.adjustments):
@@ -96,6 +95,7 @@ class TransactionSet:
 			'service_billed_units': service.service.billed_units,
 			'service_charge_amount': service.service.charge_amount,
 			'service_paid_amount': service.service.paid_amount,
+			'service_revenue_code': service.service.revenue_code,
 			'service_start_date': start_date,
 			'service_end_date': end_date,
 			'payer_id': [o.organization.type for o in transaction.organizations if o.organization.type == 'payer'][0],
@@ -112,7 +112,7 @@ class TransactionSet:
 			'provider_middle_name': claim.rendering_provider.middle_name if claim.rendering_provider else None,
 			'provider_suffix': claim.rendering_provider.name_suffix if claim.rendering_provider else None,
 			'provider_prefix': claim.rendering_provider.name_prefix if claim.rendering_provider else None,
-			'claim_received_date': claim.claim_received_date.date if claim.claim_recieved_date else None,
+			# 'claim_received_date': claim.claim_received_date.date if claim.claim_recieved_date else None,
 			'claim_paid_date': transaction.financial_information.transaction_date,
 			'claim_status': claim.claim.status if claim.claim else None,
 			'claim_total_charge_amount': claim.claim.charge_amount if claim.claim else None,
