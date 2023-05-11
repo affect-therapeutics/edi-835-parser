@@ -75,6 +75,16 @@ class TransactionSet:
 			'patient_middle_name': claim.patient.middle_name,
 			'patient_name_suffix': claim.patient.name_suffix,
 			'patient_name_prefix': claim.patient.name_prefix,
+			'code': service.service.code,
+			'modifier': service.service.modifier,
+			'qualifier': service.service.qualifier,
+			'allowed_units': service.service.allowed_units,
+			'billed_units': service.service.billed_units,
+			'charge_amount': service.service.charge_amount,
+			'allowed_amount': service.allowed_amount,
+			'paid_amount': service.service.paid_amount,
+			'start_date': start_date,
+			'end_date': end_date,
 			'payer_id': [o.organization.type for o in transaction.organizations if o.organization.type == 'payer'][0],
 			'payer_name': [o.organization.name for o in transaction.organizations if o.organization.type == 'payer'][0],
 			'bt_facility_type_code_clp08': claim.claim.facility_type_code,
@@ -110,7 +120,6 @@ class TransactionSet:
 			'claim_coverage_expiration': claim.claim_coverage_expiration.date if claim.claim_coverage_expiration else None,
 			'claim_coverage_amount': claim.amount.amount,
 			'claim_contract_code': claim.claim_contract_code.value if claim.claim_contract_code else None,
-
 		}
 
 		return datum
