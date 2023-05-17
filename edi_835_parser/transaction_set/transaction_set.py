@@ -114,10 +114,6 @@ class TransactionSet:
 			'provider_prefix': claim.rendering_provider.name_prefix if claim.rendering_provider else None,
 			# 'claim_received_date': claim.claim_received_date.date if claim.claim_recieved_date else None,
 			'claim_paid_date': transaction.financial_information.transaction_date,
-			'financial_identifier': transaction.financial_information.identifier,
-			'financial_amount_paid': transaction.financial_information.amount_paid,
-			'financial_payment_method': transaction.financial_information.payment_method,
-			'financial_routing_number': transaction.financial_information.routing_number,
 			'claim_status': claim.claim.status if claim.claim else None,
 			'claim_total_charge_amount': claim.claim.charge_amount if claim.claim else None,
 			'claim_payment_amount': claim.claim.paid_amount if claim.claim else None,
@@ -137,6 +133,12 @@ class TransactionSet:
 			'claim_coverage_expiration': claim.claim_coverage_expiration.date if claim.claim_coverage_expiration else None,
 			'claim_coverage_amount': claim.amount.amount if claim.amount else None,
 			'claim_contract_code': claim.claim_contract_code.value if claim.claim_contract_code else None,
+			'financial_identifier': transaction.financial_information.identifier,
+			'financial_amount_paid': transaction.financial_information.amount_paid,
+			'financial_payment_method': transaction.financial_information.payment_method,
+			'financial_routing_number': transaction.financial_information.routing_number,
+			'transaction_set_identifier_code': transaction.transaction.transaction_set_identifier_code,
+			'transaction_set_control_number': transaction.transaction.transaction_set_control_no,
 		}
 
 		return datum
