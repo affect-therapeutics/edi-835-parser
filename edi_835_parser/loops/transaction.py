@@ -3,6 +3,7 @@ from warnings import warn
 
 from edi_835_parser.loops.claim import Claim as ClaimLoop
 from edi_835_parser.loops.organization import Organization as OrganizationLoop
+from edi_835_parser.segments.reassociation_trace import ReassociationTrace
 from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.transaction import Transaction as TransactionSegment
 from edi_835_parser.segments.financial_information import FinancialInformation as FinancialInformationSegment
@@ -56,6 +57,9 @@ class Transaction:
                     transaction.financial_information = financial_information
                     segment = None
 
+                elif identifier == ReassociationTrace.identification:
+                    transaction.reassociation_trace = ReassociationTrace(segment)
+                    segment = None
 
                 elif identifier in cls.terminating_identifiers:
                     return transaction, segments, segment

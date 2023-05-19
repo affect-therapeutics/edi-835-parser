@@ -137,8 +137,10 @@ class TransactionSet:
 			'financial_amount_paid': transaction.financial_information.amount_paid,
 			'financial_payment_method': transaction.financial_information.payment_method,
 			'financial_routing_number': transaction.financial_information.routing_number,
-			'transaction_set_identifier_code': transaction.transaction.transaction_set_identifier_code,
-			'transaction_set_control_number': transaction.transaction.transaction_set_control_no,
+			'reassociation_number_trace_type': transaction.reassociation_trace_number.trace_type_code,
+			'reassociation_check_or_ach_number': transaction.reassociation_trace_number.check_or_eft_trace_number,
+			'reassociation_payer_identifier': transaction.payer_identifier,
+			'reassociation_payer_supplemental_code': transaction.originating_company_co_supplemental_code,
 		}
 
 		return datum
