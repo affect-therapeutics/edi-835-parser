@@ -39,6 +39,8 @@ class TransactionSet:
 						transaction
 					)
 
+					datum['transmission_date'] = self.interchange.transmission_date
+
 					for index, adjustment in enumerate(service.adjustments):
 							datum[f'adj_{index}_group'] = adjustment.group_code.code
 							datum[f'adj_{index}_code'] = adjustment.reason_code.code
@@ -112,7 +114,7 @@ class TransactionSet:
 			'provider_middle_name': claim.rendering_provider.middle_name if claim.rendering_provider else None,
 			'provider_suffix': claim.rendering_provider.name_suffix if claim.rendering_provider else None,
 			'provider_prefix': claim.rendering_provider.name_prefix if claim.rendering_provider else None,
-			# 'claim_received_date': claim.claim_received_date.date if claim.claim_recieved_date else None,
+			'claim_received_date': claim.claim_received_date.date if claim.claim_received_date else None,
 			'claim_paid_date': transaction.financial_information.transaction_date,
 			'claim_status': claim.claim.status if claim.claim else None,
 			'claim_total_charge_amount': claim.claim.charge_amount if claim.claim else None,
