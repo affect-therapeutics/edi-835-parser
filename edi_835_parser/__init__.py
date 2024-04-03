@@ -6,7 +6,7 @@ from edi_835_parser.transaction_set.transaction_set import TransactionSet
 from edi_835_parser.transaction_set.transaction_sets import TransactionSets
 
 
-def parse(path: str, debug: bool=False) -> TransactionSets:
+def parse(path: str, debug: bool = False) -> TransactionSets:
 	if path[0] == '~':
 		path = os.path.expanduser(path)
 
@@ -22,8 +22,8 @@ def parse(path: str, debug: bool=False) -> TransactionSets:
 				try:
 					transaction_set = TransactionSet.build(file_path)
 					transaction_sets.append(transaction_set)
-				except:
-					warn(f'Failed to build a transaction set from {file_path}')
+				except Exception as e:
+					warn(f'Failed to build a transaction set from {file_path} with error: {e}')
 	else:
 		transaction_set = TransactionSet.build(path)
 		transaction_sets.append(transaction_set)
@@ -38,6 +38,7 @@ def _find_edi_835_files(path: str) -> List[str]:
 			files.append(file)
 
 	return files
+
 
 if __name__ == '__main__':
 	pass

@@ -18,10 +18,12 @@ class TransactionSet:
 	def __init__(
 			self,
 			interchange: InterchangeSegment,
-			transactions: List[TransactionLoop]
+			transactions: List[TransactionLoop],
+			file_path: str,
 	):
 		self.interchange = interchange
 		self.transactions = transactions
+		self.file_path = file_path
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
@@ -53,8 +55,6 @@ class TransactionSet:
 							datum[f'rem_{index}_code'] = remark.code.code
 
 					data.append(datum)
-
-		data = pd.DataFrame(data)
 
 		return pd.DataFrame(data)
 
@@ -141,6 +141,7 @@ class TransactionSet:
 			'reassociation_check_or_ach_number': transaction.reassociation_trace.check_or_eft_trace_number,
 			'reassociation_payer_identifier': transaction.reassociation_trace.payer_identifier,
 			'reassociation_payer_supplemental_code': transaction.reassociation_trace.originating_company_co_supplemental_code,
+			'payer_classification': str(claim.claim.status.payer_classification)
 		}
 
 		return datum
@@ -176,9 +177,7 @@ class TransactionSet:
 				transactions.append(response.value)
 
 
-			# if response.key in cls.terminating_identifiers:
-
-		return TransactionSet(interchange, transactions)
+		return TransactionSet(interchange, transactions, file_path)
 
 	@classmethod
 	def build_attribute(cls, segment: Optional[str], segments: Iterator[str]) -> BuildAttributeResponse:
