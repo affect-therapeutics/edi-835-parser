@@ -9,3 +9,5 @@ __pycache__
 /dist/
 *.DS_Store
 /poetry.lock
+.direnv
+.venv

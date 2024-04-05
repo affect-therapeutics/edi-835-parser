@@ -28,6 +28,14 @@ class TransactionSet:
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
 
+	@property
+	def claims(self) -> List[ClaimLoop]:
+		claims = []
+		for transaction in self.transactions:
+			claims.extend(transaction.claims)
+
+		return claims
+
 	def to_dataframe(self) -> pd.DataFrame:
 		"""flatten the remittance advice by service to a pandas DataFrame"""
 		data = []
@@ -81,7 +89,7 @@ class TransactionSet:
 			end_date = claim.claim_statement_period_end.date
 
 		datum = {
-			'edi_transacrion_id_st02': transaction.transaction.transaction_set_control_no,
+			'edi_transaction_control_no': transaction.transaction.transaction_set_control_no,
 			'patient_control_id': claim.claim.patient_control_number if claim.claim else None,
 			'patient_id_qualifier': claim.patient.identification_code_qualifier,
 			'patient_id': claim.patient.identification_code,
@@ -100,7 +108,7 @@ class TransactionSet:
 			'service_revenue_code': service.service.revenue_code,
 			'service_start_date': start_date,
 			'service_end_date': end_date,
-			'payer_id': [o.organization.type for o in transaction.organizations if o.organization.type == 'payer'][0],
+			'payer_id': [o.organization.identification_code for o in transaction.organizations if o.organization.type == 'payer'][0],
 			'payer_name': [o.organization.name for o in transaction.organizations if o.organization.type == 'payer'][0],
 			'bt_facility_type_code_clp08': claim.claim.facility_type_code if claim.claim else None,
 			'bt_facility_type_code_clp09': claim.claim.claim_frequency_code if claim.claim else None,
