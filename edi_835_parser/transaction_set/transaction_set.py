@@ -100,7 +100,7 @@ class TransactionSet:
 			'service_revenue_code': service.service.revenue_code,
 			'service_start_date': start_date,
 			'service_end_date': end_date,
-			'payer_id': [o.organization.type for o in transaction.organizations if o.organization.type == 'payer'][0],
+			'payer_id': [o.organization.identification_code for o in transaction.organizations if o.organization.type == 'payer'][0],
 			'payer_name': [o.organization.name for o in transaction.organizations if o.organization.type == 'payer'][0],
 			'bt_facility_type_code_clp08': claim.claim.facility_type_code if claim.claim else None,
 			'bt_facility_type_code_clp09': claim.claim.claim_frequency_code if claim.claim else None,
