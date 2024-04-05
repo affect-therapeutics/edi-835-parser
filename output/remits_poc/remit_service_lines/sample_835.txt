@@ -1,0 +1,13 @@
+remit_key|remit_service_line_key|file_name|edi_transaction_id_st02|claim_service_line_id|adjudicated_product_service_id|adjudicated_modifier1|adjudicated_modifier2|adjudicated_modifier3|adjudicated_modifier4|adjudicated_line_item_amount_charged|adjudicated_line_item_amount_paid|adjudicated_revenue_code|adjudicated_product_service_id_qualifer|adjudicated_line_item_quantity|submitted_product_service_id_qualifer|submitted_product_service_id|submitted_adjudicated_modifier1|submitted_adjudicated_modifier2|submitted_adjudicated_modifier3|submitted_adjudicated_modifier4|submitted_description|submitted_line_item_quantity|line_allowed_amount|service_date_qualifier|service_line_start_date|service_line_end_date|created_at
+22|22_32|sample_835.txt|1002|UMG10063282686-1|71045|26||||23|1.78||HC|1|||||||||23|472|2021-12-06|2021-12-06|
+37|37_49|sample_835.txt|1002|UMG10063438092-1|88305|26||||105|0||HC|1|||||||||105|472|2021-11-30|2021-11-30|
+78|78_88|sample_835.txt|1001||99214|||||157|132.81||HC|1|||||||||152.81|472|2021-12-23|2021-12-23|
+78|78_94|sample_835.txt|1001||3008F|||||0|0||HC|0||||||||1||472|2021-12-23|2021-12-23|
+78|78_96|sample_835.txt|1001||3075F|||||0|0||HC|0||||||||1||472|2021-12-23|2021-12-23|
+78|78_98|sample_835.txt|1001||1159F|||||0|0||HC|0||||||||1||472|2021-12-23|2021-12-23|
+78|78_100|sample_835.txt|1001||3079F|||||0|0||HC|0||||||||1||472|2021-12-23|2021-12-23|
+102|102_113|sample_835.txt|1001|UMP10063279654-1|99214|25|CR|||157|5.3||HC|1|||||||||157|472|2021-12-02|2021-12-02|
+102|102_119|sample_835.txt|1001|UMP10063279654-2|G0008|||||44|0||HC|1|||||||||44|472|2021-12-02|2021-12-02|
+102|102_124|sample_835.txt|1001|UMP10063279654-3|90662|||||67|0||HC|1|||||||||67|472|2021-12-02|2021-12-02|
+129|129_140|sample_835.txt|1001|UMP10063743914-1|99214|||||157|1.51||HC|1|||||||||157|472|2021-12-16|2021-12-16|
+146|146_155|sample_835.txt|1001|UMP10063743920-1|99214|||||157|1.51||HC|1|||||||||157|472|2021-12-16|2021-12-16|

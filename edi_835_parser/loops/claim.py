@@ -1,5 +1,4 @@
 from typing import Iterator, Tuple, Optional, List
-from warnings import warn
 
 from edi_835_parser.segments.claim import Claim as ClaimSegment
 from edi_835_parser.segments.entity import Entity as EntitySegment
@@ -7,13 +6,20 @@ from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.date import Date as DateSegment
 from edi_835_parser.segments.amount import Amount as AmountSegment
 from edi_835_parser.segments.utilities import find_identifier
+from edi_835_parser.segments.inpatient_adjudication import InpatientAdjudication as InpatientAdjudicationSegment
+from edi_835_parser.segments.outpatient_adjudication import OutpatientAdjudication as OutpatientAdjudicationSegment
+from edi_835_parser.segments.provider_adjustment import ProviderAdjustment as ProviderAdjustmentSegment
 from edi_835_parser.loops.service import Service as ServiceLoop
+from edi_835_parser.segments.adjustment import Adjustment as ClaimAdjustmentSegment
+
+
+from log_conf import Logger
 
 
 class Claim:
 	initiating_identifier = ClaimSegment.identification
 	terminating_identifiers = [
-		ClaimSegment.identification,
+		ClaimSegment.identification, ProviderAdjustmentSegment.identification,
 		'SE'
 	]
 
@@ -25,6 +31,9 @@ class Claim:
 			references: List[ReferenceSegment] = None,
 			dates: List[DateSegment] = None,
 			amount: AmountSegment = None,
+			inpatient: InpatientAdjudicationSegment = None,
+			outpatient: OutpatientAdjudicationSegment = None,
+			adjustment: ClaimAdjustmentSegment = None
 	):
 		self.claim = claim
 		self.entities = entities if entities else []
@@ -32,6 +41,9 @@ class Claim:
 		self.references = references if references else []
 		self.dates = dates if dates else []
 		self.amount = amount
+		self.inpatient = inpatient
+		self.outpatient = outpatient
+		self.adjustment = adjustment
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
@@ -51,6 +63,15 @@ class Claim:
 
 		if len(insured) == 1:
 			return insured[0]
+
+	@property
+	def subscriber(self) -> Optional[EntitySegment]:
+		subscriber = [e for e in self.entities if e.entity == 'subscriber']
+		assert len(subscriber) <= 1
+
+		if len(subscriber) == 1:
+			return subscriber[0]
+
 
 
 	@property
@@ -89,11 +110,8 @@ class Claim:
 	@property
 	def claim_contract_code(self) -> Optional[ReferenceSegment]:
 		contract_code = [r for r in self.references if r.qualifier == 'contract code']
-		assert len(contract_code) <= 1
-
-		if len(contract_code) == 1:
+		if len(contract_code) >= 1:
 			return contract_code[0]
-
 
 	@property
 	def patient(self) -> EntitySegment:
@@ -139,13 +157,28 @@ class Claim:
 					claim.amount = amount
 					segment = None
 
+				elif identifier == InpatientAdjudicationSegment.identification:
+					inpatient = InpatientAdjudicationSegment(segment)
+					claim.inpatient = inpatient
+					segment = None
+
+				elif identifier == OutpatientAdjudicationSegment.identification:
+					outpatient = OutpatientAdjudicationSegment(segment)
+					claim.outpatient = outpatient
+					segment = None
+
+				elif identifier == ClaimAdjustmentSegment.identification:
+					adjustment = ClaimAdjustmentSegment(segment)
+					claim.adjustment = adjustment
+					segment = None
+
 				elif identifier in cls.terminating_identifiers:
 					return claim, segments, segment
 
 				else:
 					segment = None
 					message = f'Identifier: {identifier} not handled in claim loop.'
-					warn(message)
+					Logger.logr.warning(message)
 
 			except StopIteration:
 				return claim, None, None
