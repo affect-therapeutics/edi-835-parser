@@ -116,7 +116,7 @@ class TransactionSet:
 			'provider_prefix': claim.rendering_provider.name_prefix if claim.rendering_provider else None,
 			'claim_received_date': claim.claim_received_date.date if claim.claim_received_date else None,
 			'claim_paid_date': transaction.financial_information.transaction_date,
-			'claim_status': claim.claim.status if claim.claim else None,
+			'claim_status': claim.claim.status.code if claim.claim else None,
 			'claim_total_charge_amount': claim.claim.charge_amount if claim.claim else None,
 			'claim_payment_amount': claim.claim.paid_amount if claim.claim else None,
 			'claim_patient_responsibility': claim.claim.patient_responsibility_amount if claim.claim else None,
