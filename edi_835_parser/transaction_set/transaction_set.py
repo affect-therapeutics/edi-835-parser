@@ -149,12 +149,24 @@ class TransactionSet:
 		return datum
 
 	@classmethod
-	def build(cls, file_path: str) -> 'TransactionSet':
+	def build(cls, file_path: str | None = None, file = None) -> 'TransactionSet':
+		"""Constructs a TransactionSet object from a file path or a django file object
+
+		Args:
+			file_path (str | None, optional): path to file. Defaults to None.
+			file (File, optional): django file object, opened in read mode. Defaults to None.
+
+		Returns:
+			TransactionSet
+		"""
 		interchange = None
 		transactions = []
 
-		with open(file_path) as f:
-			file = f.read()
+		if file_path:
+			with open(file_path) as f:
+				file = f.read()
+		else:
+			file = file.read()
 
 		segments = file.split('~')
 		segments = [segment.strip() for segment in segments]
