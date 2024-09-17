@@ -1,3 +1,4 @@
+from decimal import Decimal
 
 def test_claim_count(
 		blue_cross_nc_sample,
@@ -61,3 +62,8 @@ def test_build_remit_service_lines(
 	assert emedny_sample.build_remit_service_lines().shape[0] == 10
 	assert sample_835.build_remit_service_lines().shape[0] == 12
 
+
+def test_total_interests(
+	sample_835
+):	
+	assert sample_835.sum_interests() == round(Decimal(10.3), 2)
