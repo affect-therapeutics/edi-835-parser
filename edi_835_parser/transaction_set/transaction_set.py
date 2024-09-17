@@ -882,10 +882,10 @@ class TransactionSet:
 	def sum_interests(self):
 		total_interest = 0
 		for transaction in self.transactions:
-				for claim in transaction.claims:
-					for amount in claim.amounts:
-						if amount.qualifier == "I":
-							total_interest += Decimal(amount.amount)
+			for claim in transaction.claims:
+				for amount in claim.amounts:
+					if amount.qualifier == "I":
+						total_interest += Decimal(amount.amount)
 
 		return total_interest
 
