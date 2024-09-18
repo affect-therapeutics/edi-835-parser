@@ -238,8 +238,6 @@ class TransactionSet:
 			transaction: TransactionLoop
 	) -> Dict[str, dict]:
 		
-		coverage_amount = TransactionSet.find_coverage_amount(claim)
-
 		remits_dict = {
 			'remit_key': claim.claim.key,
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
@@ -299,7 +297,7 @@ class TransactionSet:
 			if claim.claim_statement_period_end else None,
 			'claim_coverage_expiration': claim.claim_coverage_expiration.date
 			if claim.claim_coverage_expiration else None,
-			'claim_coverage_amount': coverage_amount,
+			'claim_coverage_amount': claim.coverage_amount,
 			'claim_contract_code': claim.claim_contract_code.value if claim.claim_contract_code else None,
 			'created_at': None,
 			'case_number': None  # populated after transformation
@@ -534,13 +532,6 @@ class TransactionSet:
 		return {'remits_dict': remits_dict, 'remit_payers_dict': remit_payers_dict,
 										'remit_remarks_adjudications_dict': remit_remarks_adjudications_dict,
 										'remit_adjustments_dict': remit_adjustments_dict}
-
-	@staticmethod
-	def find_coverage_amount(claim):
-		for amount in claim.amounts:
-			if amount.qualifier == "AU":
-				return amount.amount
-		return None
 	
 	@staticmethod
 	def serialize_transaction(

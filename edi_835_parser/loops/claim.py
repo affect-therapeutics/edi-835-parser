@@ -116,6 +116,13 @@ class Claim:
 		assert len(patient) == 1
 
 		return patient[0]
+	
+	@property
+	def coverage_amount(self):
+		for amount in self.amounts:
+			if amount.qualifier == "AU":
+				return amount.amount
+		return None
 
 	@classmethod
 	def build(cls, segment: str, segments: Iterator[str]) -> Tuple['Claim', Optional[Iterator[str]], Optional[str]]:
