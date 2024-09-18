@@ -505,7 +505,6 @@ class TransactionSet:
 		}
 
 		if claim.adjustments:
-			
 			for adjustment in claim.adjustments:
 				remit_adjustments_dict.update({
 						'remit_key': claim.claim.key,
@@ -538,12 +537,10 @@ class TransactionSet:
 
 	@staticmethod
 	def find_coverage_amount(claim):
-		coverage_amount = None
 		for amount in claim.amounts:
 			if amount.qualifier == "AU":
-				coverage_amount = amount.amount
-				break
-		return coverage_amount
+				return amount.amount
+		return None
 	
 	@staticmethod
 	def serialize_transaction(

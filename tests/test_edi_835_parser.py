@@ -64,6 +64,6 @@ def test_build_remit_service_lines(
 
 
 def test_total_interests(
-	sample_835
+	sample_935_with_interests
 ):	
-	assert sample_835.sum_interests() == round(Decimal(10.3), 2)
+	assert sample_935_with_interests.sum_interests() == round(Decimal(10.3), 2)
