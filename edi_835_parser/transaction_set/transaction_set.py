@@ -846,37 +846,6 @@ class TransactionSet:
 		else:
 			return BuildAttributeResponse(None, None, None, segments)
 
-	def count_claims(self) -> int:
-		count = 0
-		for transaction in self.transactions:
-			count += len(transaction.claims)
-
-		return count
-
-	def count_transactions(self) -> int:
-		count = 0
-		count += len(self.transactions)
-
-		return count
-
-	def count_services(self) -> int:
-		count = 0
-		for transaction in self.transactions:
-			for claim in transaction.claims:
-				count += len(claim.services)
-
-		return count
-	
-	def sum_interests(self):
-		total_interest = 0
-		for transaction in self.transactions:
-			for claim in transaction.claims:
-				for amount in claim.amounts:
-					if amount.qualifier == "I":
-						total_interest += Decimal(amount.amount)
-
-		return total_interest
-
 
 if __name__ == '__main__':
 	pass
