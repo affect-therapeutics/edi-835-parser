@@ -27,7 +27,7 @@ class Claim:
 			services: List[ServiceLoop] = None,
 			references: List[ReferenceSegment] = None,
 			dates: List[DateSegment] = None,
-			amount: AmountSegment = None,
+			amounts: List[AmountSegment] = None,
 			inpatient: InpatientAdjudicationSegment = None,
 			outpatient: OutpatientAdjudicationSegment = None,
 			adjustments: List[ClaimAdjustmentSegment] = None
@@ -37,7 +37,7 @@ class Claim:
 		self.services = services if services else []
 		self.references = references if references else []
 		self.dates = dates if dates else []
-		self.amount = amount
+		self.amounts = amounts if amounts else []
 		self.inpatient = inpatient
 		self.outpatient = outpatient
 		self.adjustments = adjustments if adjustments else []
@@ -116,6 +116,13 @@ class Claim:
 		assert len(patient) == 1
 
 		return patient[0]
+	
+	@property
+	def coverage_amount(self):
+		for amount in self.amounts:
+			if amount.qualifier == "AU":
+				return amount.amount
+		return None
 
 	@classmethod
 	def build(cls, segment: str, segments: Iterator[str]) -> Tuple['Claim', Optional[Iterator[str]], Optional[str]]:
@@ -151,7 +158,7 @@ class Claim:
 
 				elif identifier == AmountSegment.identification:
 					amount = AmountSegment(segment)
-					claim.amount = amount
+					claim.amounts.append(amount)
 					segment = None
 
 				elif identifier == InpatientAdjudicationSegment.identification:
