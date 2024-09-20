@@ -11,7 +11,7 @@ from edi_835_parser.segments.utilities import find_identifier
 from edi_835_parser.segments.interchange import Interchange as InterchangeSegment
 from edi_835_parser.segments.adjustment import Adjustment as ServiceAdjustmentSegment
 
-from log_conf import Logger
+from edi_835_parser.log_conf import Logger
 
 BuildAttributeResponse = namedtuple(
     "BuildAttributeResponse", "key value segment segments"
