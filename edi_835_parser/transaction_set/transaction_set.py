@@ -23,11 +23,9 @@ class TransactionSet:
         self,
         interchange: InterchangeSegment,
         transactions: List[TransactionLoop],
-        file_path: str,
     ):
         self.interchange = interchange
         self.transactions = transactions
-        self.file_path = file_path
 
     def __repr__(self):
         return "\n".join(str(item) for item in self.__dict__.items())
