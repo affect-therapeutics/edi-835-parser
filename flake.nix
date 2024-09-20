@@ -1,7 +1,7 @@
 # Requires the following in ~/.config/nix/nix.conf
 #   access-tokens = github.com=ghp_xxxx
 {
-  description = "Warehouse Nix Flake";
+  description = "edi_835_parser Nix Flake";
 
   inputs = {
     nixpkgs = {
