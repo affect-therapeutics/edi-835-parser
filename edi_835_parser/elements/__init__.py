@@ -7,7 +7,7 @@ class Element(ABC):
 		self.private_name = '_' + name
 
 	def __get__(self, obj, obj_type=None):
-		return getattr(obj, self.private_name)
+		return getattr(obj, self.private_name) if obj and hasattr(obj, self.private_name) else None
 
 	def __set__(self, obj, value):
 		value = self.parser(value)
