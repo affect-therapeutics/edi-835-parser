@@ -19,5 +19,4 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 @singleton
 class Logger:
     def __init__(self):
-        logging.config.fileConfig(current_path + "/logging.conf")
-        self.logr = logging.getLogger("root")
+        self.logr = logging.getLogger("edi_835_parser")
