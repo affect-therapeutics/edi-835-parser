@@ -62,6 +62,20 @@ class Service:
 		def __repr__(self):
 				return "\n".join(str(item) for item in self.__dict__.items())
 
+		@property
+		def modifiers(self) -> list[str]:
+				# Filter out empty strings and None values
+				raw_mods = [self.modifier1, self.modifier2, self.modifier3, self.modifier4]
+
+				return [mod for mod in raw_mods if mod]
+
+		@property
+		def procedure_modifiers(self) -> list[str]:
+				# Filter out empty strings and None values
+				raw_mods = [self.procedure_modifier1, self.procedure_modifier2, self.procedure_modifier3, self.procedure_modifier4]
+
+				return [mod for mod in raw_mods if mod]
+
 
 if __name__ == "__main__":
 		pass
