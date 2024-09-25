@@ -343,7 +343,7 @@ class TransactionSet:
             if claim.claim_received_date
             else None,
             "claim_paid_date": transaction.financial_information.transaction_date,
-            "claim_status": claim.claim.status,
+            "claim_status": claim.claim.status.code if claim.claim.status else None,
             "claim_total_charge_amount": claim.claim.charge_amount,
             "claim_payment_amount": claim.claim.paid_amount,
             "claim_patient_responsibility": claim.claim.patient_responsibility_amount,
@@ -435,8 +435,8 @@ class TransactionSet:
             "payer_contact_web": None,
             "payer_contact_web_qualifier": None,
             "payer_contact_web_name": None,
-            "payer_id_add": transaction.payer_identification.value
-            if transaction.payer_identification
+            "payer_id_add": transaction.other_payer_identification.value
+            if transaction.other_payer_identification
             else None,
             "created_at": None,
         }
