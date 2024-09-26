@@ -31,26 +31,26 @@ class Claim:
 	]
 
 	def __init__(
-		self,
-		claim: ClaimSegment = None,
-		entities: List[EntitySegment] = None,
-		services: List[ServiceLoop] = None,
-		references: List[ReferenceSegment] = None,
-		dates: List[DateSegment] = None,
-		amount: AmountSegment = None,
-		inpatient: InpatientAdjudicationSegment = None,
-		outpatient: OutpatientAdjudicationSegment = None,
-		adjustment: ClaimAdjustmentSegment = None,
+			self,
+			claim: ClaimSegment = None,
+			entities: List[EntitySegment] = None,
+			services: List[ServiceLoop] = None,
+			references: List[ReferenceSegment] = None,
+			dates: List[DateSegment] = None,
+			amounts: List[AmountSegment] = None,
+			inpatient: InpatientAdjudicationSegment = None,
+			outpatient: OutpatientAdjudicationSegment = None,
+			adjustments: List[ClaimAdjustmentSegment] = None
 	):
 		self.claim = claim
 		self.entities = entities if entities else []
 		self.services = services if services else []
 		self.references = references if references else []
 		self.dates = dates if dates else []
-		self.amount = amount
+		self.amounts = amounts if amounts else []
 		self.inpatient = inpatient
 		self.outpatient = outpatient
-		self.adjustment = adjustment
+		self.adjustments = adjustments if adjustments else []
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
@@ -128,6 +128,13 @@ class Claim:
 
 		return patient[0]
 
+	@property
+	def coverage_amount(self):
+		for amount in self.amounts:
+			if amount.qualifier == "AU":
+				return amount.amount
+		return None
+
 	@classmethod
 	def build(
 		cls, segment: str, segments: Iterator[str]
@@ -164,7 +171,7 @@ class Claim:
 
 				elif identifier == AmountSegment.identification:
 					amount = AmountSegment(segment)
-					claim.amount = amount
+					claim.amounts.append(amount)
 					segment = None
 
 				elif identifier == InpatientAdjudicationSegment.identification:
@@ -179,7 +186,7 @@ class Claim:
 
 				elif identifier == ClaimAdjustmentSegment.identification:
 					adjustment = ClaimAdjustmentSegment(segment)
-					claim.adjustment = adjustment
+					claim.adjustments.append(adjustment)
 					segment = None
 
 				elif identifier in cls.terminating_identifiers:

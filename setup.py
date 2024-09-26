@@ -18,11 +18,11 @@ setuptools.setup(
 	url='https://github.com/keironstoddart/edi-835-parser',
 	packages=setuptools.find_packages(),
 	classifiers=[
-		'Programming Language :: Python :: 3.9',
+		'Programming Language :: Python :: 3.6',
 		'License :: OSI Approved :: MIT License',
 		'Operating System :: OS Independent',
 	],
 	install_requires=install_requires,
 	tests_require=tests_require,
-	python_requires='>=3.9.0',
+	python_requires='>=3.6.0',
 )

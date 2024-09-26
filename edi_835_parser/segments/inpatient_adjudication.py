@@ -15,7 +15,7 @@ class InpatientAdjudication:
 		segment = split_segment(segment)
 
 		self.identifier = segment[0]
-		self.covered_days_visits_count = segment[1]
+		self.covered_days_visits_count = get_element(segment, 1)
 		self.pps_operating_outlier_amount = get_element(segment, 2)
 		self.lifetime_psychiatric_days_count = get_element(segment, 3)
 		self.claim_drg_amount = get_element(segment, 4)
