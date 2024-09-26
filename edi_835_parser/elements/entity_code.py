@@ -6,11 +6,10 @@ entity_codes = {
 	'74': 'insured',
 	'82': 'rendering provider',
 	'85': 'billing provider',
-	'IL': 'subscriber'
+	'IL': 'subscriber',
 }
 
 
 class EntityCode(Element):
-
 	def parser(self, value: str) -> str:
 		return entity_codes.get(value, value)

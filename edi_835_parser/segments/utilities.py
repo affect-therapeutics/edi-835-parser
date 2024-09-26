@@ -28,4 +28,5 @@ def get_element(segment: List[str], index: int, default=None) -> Optional[str]:
 
 	return element
 
+
 # def find_index()

@@ -22,7 +22,6 @@ remark_codes = {
 
 
 class RemarkCode(Element):
-
 	def parser(self, value: str) -> Code:
 		description = remark_codes.get(value, None)
 		return Code(value, description)

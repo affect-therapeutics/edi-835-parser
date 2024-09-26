@@ -3,7 +3,6 @@ from edi_835_parser.elements.utilities import split_element
 
 
 class ServiceCode(Element):
-
 	def parser(self, value: str) -> str:
 		if value is not None:
 			value = split_element(value)

@@ -13,6 +13,5 @@ date_qualifiers = {
 
 
 class DateQualifier(Element):
-
 	def parser(self, value: str) -> str:
 		return date_qualifiers.get(value, value)

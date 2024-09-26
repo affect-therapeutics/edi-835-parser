@@ -8,6 +8,5 @@ entity_types = {
 
 
 class EntityType(Element):
-
 	def parser(self, value: str) -> str:
 		return entity_types.get(value, value)

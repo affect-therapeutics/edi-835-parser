@@ -1,4 +1,6 @@
-from edi_835_parser.elements.authorization_information_qualifier import AuthorizationInformationQualifier
+from edi_835_parser.elements.authorization_information_qualifier import (
+	AuthorizationInformationQualifier,
+)
 from edi_835_parser.elements.organization import Organization
 from edi_835_parser.elements.date import Date
 from edi_835_parser.elements.identifier import Identifier

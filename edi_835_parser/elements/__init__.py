@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class Element(ABC):
-
 	def __set_name__(self, owner, name):
 		self.private_name = '_' + name
 
@@ -19,7 +18,6 @@ class Element(ABC):
 
 
 class Code:
-
 	def __init__(self, code: str, description: str):
 		self.code = code
 		self.description = description

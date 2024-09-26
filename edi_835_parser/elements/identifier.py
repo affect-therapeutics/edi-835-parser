@@ -4,7 +4,6 @@ from edi_835_parser.elements import Element
 
 
 class Identifier(Element):
-
 	def __set__(self, obj, value):
 		if obj.identification != value:
 			raise ValueError('class identifier does not match segment identifier.')

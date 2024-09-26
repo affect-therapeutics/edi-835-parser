@@ -4,7 +4,6 @@ from edi_835_parser.elements import Element
 
 
 class Integer(Element):
-
 	def parser(self, value: str) -> Optional[Union[int, str]]:
 		if value == '':
 			return None

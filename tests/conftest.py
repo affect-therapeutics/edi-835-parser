@@ -5,7 +5,7 @@ import pytest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-import edi_835_parser # noqa: E402
+import edi_835_parser  # noqa: E402
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -38,4 +38,3 @@ def sample_835():
 # def sample3_835():
 # 	path = current_path + '/test_edi_835_files/sample3_835.txt'
 # 	return edi_835_parser.parse(path)
-

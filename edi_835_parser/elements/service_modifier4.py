@@ -5,7 +5,6 @@ from edi_835_parser.elements.utilities import split_element
 
 
 class ServiceModifier4(Element):
-
 	def parser(self, value: str) -> Optional[str]:
 		if value is not None:
 			value = split_element(value)
