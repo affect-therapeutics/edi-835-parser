@@ -1,4 +1,4 @@
-from edi_835_parser.elements import Element, Code
+from edi_835_parser.elements import Element
 
 # https://ushik.ahrq.gov/ViewItemDetails?&system=sdo&itemKey=133213000
 reference_qualifiers = {

@@ -20,7 +20,7 @@ def parse(path: str, debug: bool = False) -> TransactionSet:
             else:
                 try:
                     transaction_set = TransactionSet.build(file_path)
-                except:
+                except Exception:
                     Logger.logr.error(
                         f"Failed to build a transaction set from {file_path}"
                     )

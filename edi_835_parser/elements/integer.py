@@ -11,7 +11,7 @@ class Integer(Element):
 
 		try:
 			value = int(value)
-		except:
+		except ValueError:
 			pass
 
 		return value
