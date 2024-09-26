@@ -28,6 +28,12 @@ def sample_835():
 	return edi_835_parser.parse(path)
 
 
+@pytest.fixture
+def sample_935_with_interests():
+	path = current_path + '/test_edi_835_files/sample_835_with_interests.txt'
+	return edi_835_parser.parse(path)
+
+
 # @pytest.fixture
 # def sample2_835():
 # 	path = current_path + '/test_edi_835_files/sample2_835.txt'
