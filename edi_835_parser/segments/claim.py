@@ -31,7 +31,6 @@ class Claim:
 		self.claim_frequency_code = get_element(segment, 9)
 		self.drg_code = get_element(segment, 11)
 
-
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
 

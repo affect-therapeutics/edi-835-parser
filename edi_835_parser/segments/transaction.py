@@ -3,24 +3,24 @@ from edi_835_parser.segments.utilities import split_segment
 
 
 class Transaction:
-    identification = 'ST'
+	identification = 'ST'
 
-    identifier = Identifier()
+	identifier = Identifier()
 
-    def __init__(self, segment: str):
-        self.index = segment.split(':', 1)[0]
-        segment = segment.split(':', 1)[1]
+	def __init__(self, segment: str):
+		self.index = segment.split(':', 1)[0]
+		segment = segment.split(':', 1)[1]
 
-        self.segment = segment
-        segment = split_segment(segment)
+		self.segment = segment
+		segment = split_segment(segment)
 
-        self.identifier = segment[0]
-        self.transaction_set_identifier_code = segment[1]
-        self.transaction_set_control_no = segment[2]
+		self.identifier = segment[0]
+		self.transaction_set_identifier_code = segment[1]
+		self.transaction_set_control_no = segment[2]
 
-    def __repr__(self):
-        return '\n'.join(str(item) for item in self.__dict__.items())
+	def __repr__(self):
+		return '\n'.join(str(item) for item in self.__dict__.items())
 
 
 if __name__ == '__main__':
-    pass
+	pass

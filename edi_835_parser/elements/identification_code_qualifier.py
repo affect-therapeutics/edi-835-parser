@@ -6,11 +6,9 @@ identification_code_qualifiers = {
 	'C': "insured's changed unique identification number",
 	'PC': 'provider commercial number',
 	'XX': 'national provider id',
-
 }
 
 
 class IdentificationCodeQualifier(Element):
-
 	def parser(self, value: str) -> str:
 		return identification_code_qualifiers.get(value, value)

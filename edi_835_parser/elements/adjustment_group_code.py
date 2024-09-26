@@ -11,7 +11,6 @@ adjustment_group_codes = {
 
 
 class AdjustmentGroupCode(Element):
-
 	def parser(self, value: str) -> Code:
 		description = adjustment_group_codes.get(value, None)
 		return Code(value, description)

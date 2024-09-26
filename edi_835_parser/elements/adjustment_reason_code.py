@@ -10,11 +10,11 @@ adjustment_reason_codes = {
 	'96': 'Non-covered charge(s). See remark code.',
 	'3': 'Co-payment Amount.',
 	'16': 'Claim/service lacks information or has submission/billing error(s).',
-	'B15':'This service/procedure requires that a qualifying service/procedure be received and covered. The qualifying other service/procedure has not been received/adjudicated.',
+	'B15': 'This service/procedure requires that a qualifying service/procedure be received and covered. The qualifying other service/procedure has not been received/adjudicated.',
 	'A1': 'Claim/Service denied. See remark code.',
 	'1': 'Deductible Amount',
 	'4': 'The procedure code is inconsistent with the modifier used. Usage: Refer to the 835 Healthcare Policy Identification Segment (loop 2110 Service Payment Information REF), if present.',
-	'18': 'Exact duplicate claim/service (Use only with Group Code OA except where state workers\' compensation regulations requires CO)',
+	'18': "Exact duplicate claim/service (Use only with Group Code OA except where state workers' compensation regulations requires CO)",
 	'23': 'The impact of prior payer(s) adjudication including payments and/or adjustments. (Use only with Group Code OA)',
 	'26': 'Expenses incurred prior to coverage.',
 	'27': 'Expenses incurred after coverage terminated.',
@@ -27,7 +27,6 @@ adjustment_reason_codes = {
 
 
 class AdjustmentReasonCode(Element):
-
 	def parser(self, value: str) -> Code:
 		description = adjustment_reason_codes.get(value, None)
 		return Code(value, description)
