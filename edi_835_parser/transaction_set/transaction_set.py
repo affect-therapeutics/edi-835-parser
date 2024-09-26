@@ -1,4 +1,4 @@
-from typing import List, Iterator, Optional
+from typing import Dict, List, Iterator, Optional
 from collections import namedtuple
 
 import pandas as pd
@@ -342,12 +342,9 @@ class TransactionSet:
 			if claim.claim_statement_period_end
 			else None,
 			'claim_coverage_expiration': claim.claim_coverage_expiration.date
-			if claim.claim_coverage_expiration
-			else None,
-			'claim_coverage_amount': claim.amount.amount if claim.amount else None,
-			'claim_contract_code': claim.claim_contract_code.value
-			if claim.claim_contract_code
-			else None,
+			if claim.claim_coverage_expiration else None,
+			'claim_coverage_amount': claim.coverage_amount,
+			'claim_contract_code': claim.claim_contract_code.value if claim.claim_contract_code else None,
 			'created_at': None,
 			'case_number': None,  # populated after transformation
 		}
@@ -559,43 +556,42 @@ class TransactionSet:
 			'created_at': None,
 		}
 
-		if claim.adjustment:
-			remit_adjustments_dict.update(
-				{
-					'remit_key': claim.claim.key,
-					'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
-					'adjustment_group_code': claim.adjustment.group_code,
-					'adjustment_reason_code': claim.adjustment.reason_code,
-					'adjustment_amount': claim.adjustment.amount,
-					'adjustment_quantity': claim.adjustment.quantity,
-					'adjustment_reason_code2': claim.adjustment.reason_code2,
-					'adjustment_amount2': claim.adjustment.amount2,
-					'adjustment_quantity2': claim.adjustment.quantity2,
-					'adjustment_reason_code3': claim.adjustment.reason_code3,
-					'adjustment_amount3': claim.adjustment.amount3,
-					'adjustment_quantity3': claim.adjustment.quantity3,
-					'adjustment_reason_code4': claim.adjustment.reason_code4,
-					'adjustment_amount4': claim.adjustment.amount4,
-					'adjustment_quantity4': claim.adjustment.quantity4,
-					'adjustment_reason_code5': claim.adjustment.reason_code5,
-					'adjustment_amount5': claim.adjustment.amount5,
-					'adjustment_quantity5': claim.adjustment.quantity5,
-					'adjustment_reason_code6': claim.adjustment.reason_code6,
-					'adjustment_amount6': claim.adjustment.amount6,
-					'adjustment_quantity6': claim.adjustment.quantity6,
-					'created_at': None,
-				}
-			)
+		if claim.adjustments:
+			for adjustment in claim.adjustments:
+				remit_adjustments_dict.update({
+						'remit_key': claim.claim.key,
+						'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+						'adjustment_group_code': adjustment.group_code,
+						'adjustment_reason_code': adjustment.reason_code,
+						'adjustment_amount': adjustment.amount,
+						'adjustment_quantity': adjustment.quantity,
+						'adjustment_reason_code2': adjustment.reason_code2,
+						'adjustment_amount2': adjustment.amount2,
+						'adjustment_quantity2': adjustment.quantity2,
+						'adjustment_reason_code3': adjustment.reason_code3,
+						'adjustment_amount3': adjustment.amount3,
+						'adjustment_quantity3': adjustment.quantity3,
+						'adjustment_reason_code4': adjustment.reason_code4,
+						'adjustment_amount4': adjustment.amount4,
+						'adjustment_quantity4': adjustment.quantity4,
+						'adjustment_reason_code5': adjustment.reason_code5,
+						'adjustment_amount5': adjustment.amount5,
+						'adjustment_quantity5': adjustment.quantity5,
+						'adjustment_reason_code6': adjustment.reason_code6,
+						'adjustment_amount6': adjustment.amount6,
+						'adjustment_quantity6': adjustment.quantity6,
+						'created_at': None
+					})
 
-		return {
-			'remits_dict': remits_dict,
-			'remit_payers_dict': remit_payers_dict,
-			'remit_remarks_adjudications_dict': remit_remarks_adjudications_dict,
-			'remit_adjustments_dict': remit_adjustments_dict,
-		}
+		return {'remits_dict': remits_dict, 'remit_payers_dict': remit_payers_dict,
+										'remit_remarks_adjudications_dict': remit_remarks_adjudications_dict,
+										'remit_adjustments_dict': remit_adjustments_dict}
 
 	@staticmethod
-	def serialize_transaction(transaction: TransactionLoop) -> dict[str, dict]:
+	def serialize_transaction(
+			transaction: TransactionLoop
+	) -> Dict[str, dict]:
+
 		remit_financial_info_dict = {
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'alt_id': None,  # this col gets populated during transformation
@@ -661,32 +657,37 @@ class TransactionSet:
 			'created_at': None,
 		}
 
-		if transaction.provider_adjustment:
-			provider_adjustment_dict.update(
-				{
-					'provider_id': transaction.provider_adjustment.provider_id,
+		if transaction.provider_adjustments:
+			for provider_adjustment in transaction.provider_adjustments:
+				provider_adjustment_dict.update({
+					'provider_id': provider_adjustment.provider_id,
 					'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
-					'fiscal_period_date': transaction.provider_adjustment.fiscal_period_date,
-					'provider_adjustment_reason_code1': transaction.provider_adjustment.reason_code1,
-					'provider_adjustment_id1': transaction.provider_adjustment.id1,
-					'provider_adjustment_amount1': transaction.provider_adjustment.amount1,
-					'provider_adjustment_reason_code2': transaction.provider_adjustment.reason_code2,
-					'provider_adjustment_id2': transaction.provider_adjustment.id2,
-					'provider_adjustment_amount2': transaction.provider_adjustment.amount2,
-					'provider_adjustment_reason_code3': transaction.provider_adjustment.reason_code3,
-					'provider_adjustment_id3': transaction.provider_adjustment.id3,
-					'provider_adjustment_amount3': transaction.provider_adjustment.amount3,
-					'provider_adjustment_reason_code4': transaction.provider_adjustment.reason_code4,
-					'provider_adjustment_id4': transaction.provider_adjustment.id4,
-					'provider_adjustment_amount4': transaction.provider_adjustment.amount4,
-					'provider_adjustment_reason_code5': transaction.provider_adjustment.reason_code5,
-					'provider_adjustment_id5': transaction.provider_adjustment.id5,
-					'provider_adjustment_amount5': transaction.provider_adjustment.amount5,
-					'provider_adjustment_reason_code6': transaction.provider_adjustment.reason_code6,
-					'provider_adjustment_id6': transaction.provider_adjustment.id6,
-					'provider_adjustment_amount6': transaction.provider_adjustment.amount6,
-				}
-			)
+					'fiscal_period_date': provider_adjustment.fiscal_period_date,
+					'provider_adjustment_reason_code1': provider_adjustment.reason_code1,
+					'provider_adjustment_id1': provider_adjustment.id1,
+					'provider_adjustment_amount1': provider_adjustment.amount1,
+					'provider_adjustment_reason_code2': provider_adjustment.reason_code2,
+					'provider_adjustment_id2': provider_adjustment.id2,
+					'provider_adjustment_amount2': provider_adjustment.amount2,
+					'provider_adjustment_reason_code3': provider_adjustment.reason_code3,
+					'provider_adjustment_id3': provider_adjustment.id3,
+					'provider_adjustment_amount3': provider_adjustment.amount3,
+					'provider_adjustment_reason_code4': provider_adjustment.reason_code4,
+					'provider_adjustment_id4': provider_adjustment.id4,
+					'provider_adjustment_amount4': provider_adjustment.amount4,
+					'provider_adjustment_reason_code5': provider_adjustment.reason_code5,
+					'provider_adjustment_id5': provider_adjustment.id5,
+					'provider_adjustment_amount5': provider_adjustment.amount5,
+					'provider_adjustment_reason_code6': provider_adjustment.reason_code6,
+					'provider_adjustment_id6': provider_adjustment.id6,
+					'provider_adjustment_amount6': provider_adjustment.amount6
+
+
+				})
+
+		return {'remit_financial_info_dict': remit_financial_info_dict,
+										'provider_adjustment_dict': provider_adjustment_dict}
+
 
 		return {
 			'remit_financial_info_dict': remit_financial_info_dict,
@@ -696,7 +697,7 @@ class TransactionSet:
 	@staticmethod
 	def serialize_service(
 		transaction: TransactionLoop, claim: ClaimLoop, service: ServiceLoop
-	) -> dict[str, dict]:
+	) -> Dict[str, dict]:
 		# if the service doesn't have a start date assume the service and claim dates match
 		start_date = None
 		if service.service_period_start:
@@ -781,11 +782,12 @@ class TransactionSet:
 
 	@staticmethod
 	def serialize_adjustment(
-		transaction: TransactionLoop,
-		claim: ClaimLoop,
-		service: ServiceLoop,
-		adjustment: ServiceAdjustmentSegment,
-	) -> dict[str, dict]:
+			transaction: TransactionLoop,
+			claim: ClaimLoop,
+			service: ServiceLoop,
+			adjustment: ServiceAdjustmentSegment
+	) -> Dict[str, dict]:
+
 		service_line_adjustments_dict = {
 			'remit_key': None,
 			'edi_transaction_id_st02': None,
@@ -847,14 +849,11 @@ class TransactionSet:
 		return {'service_line_adjustments_dict': service_line_adjustments_dict}
 
 	@classmethod
-	def build(cls, file_path: str) -> 'TransactionSet':
+	def build_from_string(cls, edi_file_string: str) -> 'TransactionSet':
 		interchange = None
 		transactions = []
 
-		with open(file_path) as f:
-			file = f.read()
-
-		segments = file.split('~')
+		segments = edi_file_string.split('~')
 		segments = [segment.strip() for segment in segments]
 		segments = [f'{index}:{segment}' for index, segment in enumerate(segments)]
 		segments = iter(segments)
@@ -880,9 +879,13 @@ class TransactionSet:
 		return TransactionSet(interchange, transactions)
 
 	@classmethod
-	def build_attribute(
-		cls, segment: Optional[str], segments: Iterator[str]
-	) -> BuildAttributeResponse:
+	def build(cls, file_path: str) -> 'TransactionSet':
+		with open(file_path) as f:
+			file_contents = f.read()
+		return cls.build_from_string(file_contents)
+
+	@classmethod
+	def build_attribute(cls, segment: Optional[str], segments: Iterator[str]) -> BuildAttributeResponse:
 		if segment is None:
 			try:
 				segment = segments.__next__()
@@ -909,27 +912,6 @@ class TransactionSet:
 
 		else:
 			return BuildAttributeResponse(None, None, None, segments)
-
-	def count_claims(self) -> int:
-		count = 0
-		for transaction in self.transactions:
-			count += len(transaction.claims)
-
-		return count
-
-	def count_transactions(self) -> int:
-		count = 0
-		count += len(self.transactions)
-
-		return count
-
-	def count_services(self) -> int:
-		count = 0
-		for transaction in self.transactions:
-			for claim in transaction.claims:
-				count += len(claim.services)
-
-		return count
 
 
 if __name__ == '__main__':
