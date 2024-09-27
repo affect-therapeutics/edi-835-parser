@@ -20,14 +20,9 @@ reference_qualifiers = {
 	'G2': 'Provider Commerical Number',
 	'HPI': 'Centers for Medicare and Medicaid Services National Provider Identifier',
 	'SY': 'Social Security Number',
+	# https://www.cms.gov/medicare/billing/electronicbillingeditrans/downloads/835-flatfile.pdf
+	'EV': 'Reference Identification Number',
 }
-
-
-# class ReferenceQualifier(Element):
-#
-# 	def parser(self, value: str) -> Code:
-# 		description = reference_qualifiers.get(value, None)
-# 		return Code(value, description)
 
 
 class ReferenceQualifier(Element):
