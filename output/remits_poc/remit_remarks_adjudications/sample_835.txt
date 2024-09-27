@@ -1,7 +1,7 @@
 remit_key|file_name|edi_transaction_id_st02|MIA_covered_days_visits_count|MIA_pps_operating_outlier_amount|MIA_lifetime_psychiatric_days_count|MIA_claim_drg_amount|MIA_claim_payment_remark_code|MIA_claim_disproportionate_share_amount|MIA_claim_msp_pass_though_amount|MIA_claim_pps_capital_amount|MIA_pps_capital_fsp_drg_amount|MIA_pps_capital_hsp_drg_amount|MIA_pps_capital_dsh_drg_amount|MIA_old_capital_amount|MIA_pps_capital_ime_amount|MIA_pps_operating_hospital_specific_drg_amount|MIA_cost_report_day_count|MIA_pps_operating_federal_specific_drg_amount|MIA_claim_pps_capital_outlier_amount|MIA_claim_indirect_teaching_amount|MIA_non_payable_professional_component_amount|MIA_claim_remark_code1|MIA_claim_remark_code2|MIA_claim_remark_code3|MIA_claim_remark_code4|MIA_pps_capital_exception_amount|MOA_reimbursement_rate|MOA_claim_hcpcs_payment_amount|MOA_claim_remark_code1|MOA_claim_remark_code2|MOA_claim_remark_code3|MOA_claim_remark_code4|MOA_claim_remark_code5|MOA_claim_esrd_payment_amount|MOA_non_payable_professional_component_amount|created_at
 22|sample_835.txt|1002||||||||||||||||||||||||||||||||||
-37|sample_835.txt|1002|2|3|4|3|remark_code1|5|6|7|8|||||||||||||||remark_code04|('1',)|2|3|4||||||
-78|sample_835.txt|1001|2|3|4|3|remark_code2|5|6|7|8|||||||||||||||remark_code04|('1',)|2|3|4||||||
-102|sample_835.txt|1001|2|3|4|3|remark_code3|5|6|7|8|||||||||||||||remark_code04|('1',)|2|3|4||||||
-129|sample_835.txt|1001|2|3|4|3|remark_code4|5|6|7|8||||||||||||||||('1',)|2|3|4||||||
+37|sample_835.txt|1002|2|3|4|3|remark_code1|5|6|7|8|||||||||||||||remark_code04|1|2|3|4||||||
+78|sample_835.txt|1001|2|3|4|3|remark_code2|5|6|7|8|||||||||||||||remark_code04|1|2|3|4||||||
+102|sample_835.txt|1001|2|3|4|3|remark_code3|5|6|7|8|||||||||||||||remark_code04|1|2|3|4||||||
+129|sample_835.txt|1001|2|3|4|3|remark_code4|5|6|7|8||||||||||||||||1|2|3|4||||||
 146|sample_835.txt|1001||||||||||||||||||||||||||||||||||
