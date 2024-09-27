@@ -24,7 +24,7 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            python311
+            python312
             poetry
           ];
           shellHook = ''
