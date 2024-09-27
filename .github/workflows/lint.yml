@@ -1,5 +1,4 @@
-name: Run Pytest
-
+name: Lint with ruff
 on:
   push:
     branches: ["main"]
