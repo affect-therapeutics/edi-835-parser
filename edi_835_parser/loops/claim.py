@@ -131,7 +131,7 @@ class Claim:
 	@property
 	def coverage_amount(self):
 		for amount in self.amounts:
-			if amount.qualifier == "AU":
+			if amount.qualifier == 'coverage amount':
 				return amount.amount
 		return None
 
