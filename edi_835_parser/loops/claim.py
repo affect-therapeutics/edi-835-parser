@@ -31,16 +31,16 @@ class Claim:
 	]
 
 	def __init__(
-			self,
-			claim: ClaimSegment = None,
-			entities: List[EntitySegment] = None,
-			services: List[ServiceLoop] = None,
-			references: List[ReferenceSegment] = None,
-			dates: List[DateSegment] = None,
-			amounts: List[AmountSegment] = None,
-			inpatient: InpatientAdjudicationSegment = None,
-			outpatient: OutpatientAdjudicationSegment = None,
-			adjustments: List[ClaimAdjustmentSegment] = None
+		self,
+		claim: ClaimSegment = None,
+		entities: List[EntitySegment] = None,
+		services: List[ServiceLoop] = None,
+		references: List[ReferenceSegment] = None,
+		dates: List[DateSegment] = None,
+		amounts: List[AmountSegment] = None,
+		inpatient: InpatientAdjudicationSegment = None,
+		outpatient: OutpatientAdjudicationSegment = None,
+		adjustments: List[ClaimAdjustmentSegment] = None,
 	):
 		self.claim = claim
 		self.entities = entities if entities else []
