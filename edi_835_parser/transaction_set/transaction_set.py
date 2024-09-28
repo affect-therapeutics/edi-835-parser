@@ -342,9 +342,12 @@ class TransactionSet:
 			if claim.claim_statement_period_end
 			else None,
 			'claim_coverage_expiration': claim.claim_coverage_expiration.date
-			if claim.claim_coverage_expiration else None,
+			if claim.claim_coverage_expiration
+			else None,
 			'claim_coverage_amount': claim.coverage_amount,
-			'claim_contract_code': claim.claim_contract_code.value if claim.claim_contract_code else None,
+			'claim_contract_code': claim.claim_contract_code.value
+			if claim.claim_contract_code
+			else None,
 			'created_at': None,
 			'case_number': None,  # populated after transformation
 		}
@@ -558,7 +561,8 @@ class TransactionSet:
 
 		if claim.adjustments:
 			for adjustment in claim.adjustments:
-				remit_adjustments_dict.update({
+				remit_adjustments_dict.update(
+					{
 						'remit_key': claim.claim.key,
 						'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 						'adjustment_group_code': adjustment.group_code,
@@ -580,18 +584,19 @@ class TransactionSet:
 						'adjustment_reason_code6': adjustment.reason_code6,
 						'adjustment_amount6': adjustment.amount6,
 						'adjustment_quantity6': adjustment.quantity6,
-						'created_at': None
-					})
+						'created_at': None,
+					}
+				)
 
-		return {'remits_dict': remits_dict, 'remit_payers_dict': remit_payers_dict,
-										'remit_remarks_adjudications_dict': remit_remarks_adjudications_dict,
-										'remit_adjustments_dict': remit_adjustments_dict}
+		return {
+			'remits_dict': remits_dict,
+			'remit_payers_dict': remit_payers_dict,
+			'remit_remarks_adjudications_dict': remit_remarks_adjudications_dict,
+			'remit_adjustments_dict': remit_adjustments_dict,
+		}
 
 	@staticmethod
-	def serialize_transaction(
-			transaction: TransactionLoop
-	) -> Dict[str, dict]:
-
+	def serialize_transaction(transaction: TransactionLoop) -> Dict[str, dict]:
 		remit_financial_info_dict = {
 			'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
 			'alt_id': None,  # this col gets populated during transformation
@@ -659,35 +664,36 @@ class TransactionSet:
 
 		if transaction.provider_adjustments:
 			for provider_adjustment in transaction.provider_adjustments:
-				provider_adjustment_dict.update({
-					'provider_id': provider_adjustment.provider_id,
-					'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
-					'fiscal_period_date': provider_adjustment.fiscal_period_date,
-					'provider_adjustment_reason_code1': provider_adjustment.reason_code1,
-					'provider_adjustment_id1': provider_adjustment.id1,
-					'provider_adjustment_amount1': provider_adjustment.amount1,
-					'provider_adjustment_reason_code2': provider_adjustment.reason_code2,
-					'provider_adjustment_id2': provider_adjustment.id2,
-					'provider_adjustment_amount2': provider_adjustment.amount2,
-					'provider_adjustment_reason_code3': provider_adjustment.reason_code3,
-					'provider_adjustment_id3': provider_adjustment.id3,
-					'provider_adjustment_amount3': provider_adjustment.amount3,
-					'provider_adjustment_reason_code4': provider_adjustment.reason_code4,
-					'provider_adjustment_id4': provider_adjustment.id4,
-					'provider_adjustment_amount4': provider_adjustment.amount4,
-					'provider_adjustment_reason_code5': provider_adjustment.reason_code5,
-					'provider_adjustment_id5': provider_adjustment.id5,
-					'provider_adjustment_amount5': provider_adjustment.amount5,
-					'provider_adjustment_reason_code6': provider_adjustment.reason_code6,
-					'provider_adjustment_id6': provider_adjustment.id6,
-					'provider_adjustment_amount6': provider_adjustment.amount6
+				provider_adjustment_dict.update(
+					{
+						'provider_id': provider_adjustment.provider_id,
+						'edi_transaction_id_st02': transaction.transaction.transaction_set_control_no,
+						'fiscal_period_date': provider_adjustment.fiscal_period_date,
+						'provider_adjustment_reason_code1': provider_adjustment.reason_code1,
+						'provider_adjustment_id1': provider_adjustment.id1,
+						'provider_adjustment_amount1': provider_adjustment.amount1,
+						'provider_adjustment_reason_code2': provider_adjustment.reason_code2,
+						'provider_adjustment_id2': provider_adjustment.id2,
+						'provider_adjustment_amount2': provider_adjustment.amount2,
+						'provider_adjustment_reason_code3': provider_adjustment.reason_code3,
+						'provider_adjustment_id3': provider_adjustment.id3,
+						'provider_adjustment_amount3': provider_adjustment.amount3,
+						'provider_adjustment_reason_code4': provider_adjustment.reason_code4,
+						'provider_adjustment_id4': provider_adjustment.id4,
+						'provider_adjustment_amount4': provider_adjustment.amount4,
+						'provider_adjustment_reason_code5': provider_adjustment.reason_code5,
+						'provider_adjustment_id5': provider_adjustment.id5,
+						'provider_adjustment_amount5': provider_adjustment.amount5,
+						'provider_adjustment_reason_code6': provider_adjustment.reason_code6,
+						'provider_adjustment_id6': provider_adjustment.id6,
+						'provider_adjustment_amount6': provider_adjustment.amount6,
+					}
+				)
 
-
-				})
-
-		return {'remit_financial_info_dict': remit_financial_info_dict,
-										'provider_adjustment_dict': provider_adjustment_dict}
-
+		return {
+			'remit_financial_info_dict': remit_financial_info_dict,
+			'provider_adjustment_dict': provider_adjustment_dict,
+		}
 
 		return {
 			'remit_financial_info_dict': remit_financial_info_dict,
@@ -782,12 +788,11 @@ class TransactionSet:
 
 	@staticmethod
 	def serialize_adjustment(
-			transaction: TransactionLoop,
-			claim: ClaimLoop,
-			service: ServiceLoop,
-			adjustment: ServiceAdjustmentSegment
+		transaction: TransactionLoop,
+		claim: ClaimLoop,
+		service: ServiceLoop,
+		adjustment: ServiceAdjustmentSegment,
 	) -> Dict[str, dict]:
-
 		service_line_adjustments_dict = {
 			'remit_key': None,
 			'edi_transaction_id_st02': None,
@@ -885,7 +890,9 @@ class TransactionSet:
 		return cls.build_from_string(file_contents)
 
 	@classmethod
-	def build_attribute(cls, segment: Optional[str], segments: Iterator[str]) -> BuildAttributeResponse:
+	def build_attribute(
+		cls, segment: Optional[str], segments: Iterator[str]
+	) -> BuildAttributeResponse:
 		if segment is None:
 			try:
 				segment = segments.__next__()
