@@ -1,4 +1,6 @@
-from edi_835_parser.elements.authorization_information_qualifier import AuthorizationInformationQualifier
+from edi_835_parser.elements.authorization_information_qualifier import (
+	AuthorizationInformationQualifier,
+)
 from edi_835_parser.elements.organization import Organization
 from edi_835_parser.elements.date import Date
 from edi_835_parser.elements.identifier import Identifier
@@ -15,6 +17,9 @@ class Interchange:
 	transmission_date = Date()
 
 	def __init__(self, segment: str):
+		self.index = segment.split(':', 1)[0]
+		segment = segment.split(':', 1)[1]
+
 		self.segment = segment
 		segment = split_segment(segment)
 

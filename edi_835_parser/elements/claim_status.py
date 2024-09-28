@@ -28,6 +28,7 @@ class Status:
 	- payer_classification (:class:`PayerClassification`)
 	- was_forwarded (:class:`bool`): True if the claim was forwarded to an additional payer
 	"""
+
 	code: str
 	description: str
 	payer_classification: PayerClassification
@@ -39,9 +40,21 @@ _REGISTRY = [
 	Status('2', 'processed as secondary', PayerClassification.SECONDARY, False),
 	Status('3', 'processed as tertiary', PayerClassification.TERTIARY, False),
 	Status('4', 'denial', PayerClassification.UNSPECIFIED, False),
-	Status('19', 'processed as primary, forwarded to additional payer(s)', PayerClassification.PRIMARY, True),
-	Status('20', 'processed as secondary, forwarded to additional payer(s)', PayerClassification.SECONDARY, True),
-	Status('21', 'processed as tertiary, forwarded to additional payer(s)', PayerClassification.TERTIARY, True),
+	Status(
+		'19', 'processed as primary, forwarded to additional payer(s)', PayerClassification.PRIMARY, True
+	),
+	Status(
+		'20',
+		'processed as secondary, forwarded to additional payer(s)',
+		PayerClassification.SECONDARY,
+    True,
+	),
+	Status(
+		'21',
+		'processed as tertiary, forwarded to additional payer(s)',
+		PayerClassification.TERTIARY,
+    True,
+	),
 	Status('22', 'reversal of previous payment', PayerClassification.UNSPECIFIED, False),
 ]
 
@@ -49,13 +62,14 @@ _REGISTRY = [
 def _lookup_status(code: str) -> Status:
 	status = [s for s in _REGISTRY if s.code == code]
 	if len(status) == 0:
-		warn(f'ClaimStatus: Code {code} does not match a status in the edi-835-parser claim status registry.')
+		warn(
+			f'ClaimStatus: Code {code} does not match a status in the edi-835-parser claim status registry.'
+		)
 		return Status('code', 'uncategorized', PayerClassification.UNKNOWN)
 
 	return status[0]
 
 
 class ClaimStatus(Element):
-
 	def parser(self, value: str) -> Status:
 		return _lookup_status(value)

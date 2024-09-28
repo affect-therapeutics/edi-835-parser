@@ -4,7 +4,6 @@ from edi_835_parser.elements import Element
 
 
 class Dollars(Element):
-
 	def parser(self, value: str) -> Optional[float]:
-		if value != '':
+		if value != '' and value is not None:
 			return float(value)

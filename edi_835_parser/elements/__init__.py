@@ -2,12 +2,11 @@ from abc import ABC, abstractmethod
 
 
 class Element(ABC):
-
 	def __set_name__(self, owner, name):
 		self.private_name = '_' + name
 
 	def __get__(self, obj, obj_type=None):
-		return getattr(obj, self.private_name)
+		return getattr(obj, self.private_name) if obj and hasattr(obj, self.private_name) else None
 
 	def __set__(self, obj, value):
 		value = self.parser(value)
@@ -19,7 +18,6 @@ class Element(ABC):
 
 
 class Code:
-
 	def __init__(self, code: str, description: str):
 		self.code = code
 		self.description = description

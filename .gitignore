@@ -7,4 +7,7 @@ __pycache__
 /edi_835_parser.egg-info/
 /build/
 /dist/
+*.DS_Store
 /poetry.lock
+.venv
+.direnv

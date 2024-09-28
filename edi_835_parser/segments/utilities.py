@@ -16,8 +16,10 @@ def split_segment(segment: str) -> List[str]:
 
 
 def find_identifier(segment) -> str:
+	segment = segment.split(':', 1)[1]
 	segment = split_segment(segment)
 	return segment[0]
+
 
 def get_element(segment: List[str], index: int, default=None) -> Optional[str]:
 	element = default
@@ -25,3 +27,6 @@ def get_element(segment: List[str], index: int, default=None) -> Optional[str]:
 		element = segment[index]
 
 	return element
+
+
+# def find_index()

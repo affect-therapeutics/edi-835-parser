@@ -1,0 +1,3 @@
+file_name|remit_key|edi_transaction_id_st02|claim_service_line_id|remit_service_line_key|remark_code_list_qualifier|remark_code|created_at
+sample_835.txt|37|1002|UMG10063438092-1|37_49|HE|code1|
+sample_835.txt|146|1001|UMP10063743920-1|146_155|HE|code2|
