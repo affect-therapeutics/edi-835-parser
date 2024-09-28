@@ -12,6 +12,8 @@ python = "^3.9"
 pandas = "^2.0.3"
 pytest = "^8.1.1"
 
+[tool.poetry.dev-dependencies]
+ruff = "*"
 
 [build-system]
 requires = ["poetry-core"]
