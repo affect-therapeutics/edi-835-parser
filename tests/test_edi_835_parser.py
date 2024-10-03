@@ -1,4 +1,6 @@
 from decimal import Decimal
+import os
+import subprocess
 
 from utils import count_claims, count_transactions, count_services, sum_interests
 
@@ -44,3 +46,32 @@ def test_build_remit_service_lines(blue_cross_nc_sample, emedny_sample, sample_8
 
 def test_total_interests(sample_935_with_interests):
 	assert sum_interests(sample_935_with_interests) == round(Decimal(10.3), 2)
+
+
+def test_cli_output_snapshot():
+	OUTPUT_DIR = 'output/remits_poc'
+	# List all the files in the output directory recursively
+	output_files = [
+		f'{OUTPUT_DIR}/{dir}/{file}'
+		for dir in os.listdir(OUTPUT_DIR)
+		for file in os.listdir(f'{OUTPUT_DIR}/{dir}')
+	]
+	# Load the contents of each file
+	output_file_contents = {file: open(file, 'r').read() for file in output_files}
+
+	# run edi_parser.py
+	subprocess.run(['python', 'edi_parser.py'], stdout=subprocess.PIPE).stdout.decode()
+	#
+
+	current_output = [
+		f'{OUTPUT_DIR}/{dir}/{file}'
+		for dir in os.listdir(OUTPUT_DIR)
+		for file in os.listdir(f'{OUTPUT_DIR}/{dir}')
+	]
+	# Load the contents of each file
+	current_output_files = {file: open(file, 'r').read() for file in current_output}
+
+	# compare the output
+	assert (
+		output_file_contents == current_output_files
+	), 'Output files have changed run check git for differences'

@@ -187,8 +187,10 @@ class TransactionSet:
 
 						remit_service_lines_remarks_dict.update(
 							{
-								'remark_code_list_qualifier': remark.qualifier,
-								'remark_code': remark.code,
+								'remark_code_list_qualifier': (
+									remark.qualifier.code if remark.qualifier else None
+								),
+								'remark_code': remark.code.code if remark.code else None,
 							}
 						)
 						service_line_remarks_data.append(remit_service_lines_remarks_dict)
