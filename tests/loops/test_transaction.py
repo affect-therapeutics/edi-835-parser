@@ -3,6 +3,12 @@ from edi_835_parser.segments.address import Address
 from edi_835_parser.segments.location import Location
 
 
+def test_transaction_other_payer_identification(sample_835):
+	transaction = sample_835.transactions[0]
+	assert transaction.other_payer_identification.identification == 'REF'
+	assert transaction.other_payer_identification.value == '31048'
+
+
 def test_transaction_properties(sample_835):
 	transaction = sample_835.transactions[0]
 	assert transaction.transaction.transaction_set_identifier_code == '835'
