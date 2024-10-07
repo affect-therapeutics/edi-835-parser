@@ -10,13 +10,13 @@ class PaymentMethodMock:
 
 def test_payment_method_element():
 	mock = PaymentMethodMock('ACH')
-	assert mock.payment_method == 'Automated Clearing House (ACH)'
+	assert mock.payment_method.description == 'Automated Clearing House (ACH)'
 
 	mock = PaymentMethodMock('CHK')
-	assert mock.payment_method == 'Check'
+	assert mock.payment_method.description == 'Check'
 
 	mock = PaymentMethodMock('NON')
-	assert mock.payment_method == 'Non-Payment Data'
+	assert mock.payment_method.description == 'Non-Payment Data'
 
 	mock = PaymentMethodMock('BOP')
-	assert mock.payment_method == 'Financial Institution Option'
+	assert mock.payment_method.description == 'Financial Institution Option'

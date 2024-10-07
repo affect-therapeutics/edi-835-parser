@@ -609,7 +609,7 @@ class TransactionSet:
 			'fin_info_transaction_handling_code': transaction.financial_information.transaction_handling_code,
 			'fin_info_total_check_amount': transaction.financial_information.amount_paid,
 			'fin_info_credit_debit_flag': transaction.financial_information.credit_debit_flag,
-			'fin_info_payment_method_code': transaction.financial_information.payment_method,
+			'fin_info_payment_method_code': transaction.financial_information.payment_method.code,
 			'fin_info_payment_format_code': transaction.financial_information.payment_format,
 			'fin_info_sender_dfi_id_number_qualifier': transaction.financial_information.id_qualifier,
 			'fin_info_sender_dfi_identification_number': transaction.financial_information.id,

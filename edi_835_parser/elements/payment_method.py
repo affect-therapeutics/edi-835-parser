@@ -1,4 +1,4 @@
-from edi_835_parser.elements import Element
+from edi_835_parser.elements import Code, Element
 
 payment_methods = {
 	'ACH': 'Automated Clearing House (ACH)',
@@ -63,4 +63,5 @@ payment_methods = {
 class PaymentMethod(Element):
 	def parser(self, value: str) -> str:
 		value = value.strip()
-		return payment_methods.get(value, value)
+		description = payment_methods.get(value, value)
+		return Code(code=value, description=description)
