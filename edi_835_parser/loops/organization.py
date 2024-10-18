@@ -83,8 +83,10 @@ class Organization:
 					return organization, segments, segment
 
 				else:
+					message = (
+						f'Identifier: {identifier} not handled in organization loop.  {segment}'
+					)
 					segment = None
-					message = f'Identifier: {identifier} not handled in organization loop.'
 					Logger.logr.warning(message)
 
 			except StopIteration:

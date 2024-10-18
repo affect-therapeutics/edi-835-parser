@@ -39,3 +39,14 @@ def sample_935_with_interests():
 def nevada_medicaid_sample():
 	path = current_path + '/test_edi_835_files/nevada_medicaid.txt'
 	return edi_835_parser.parse(path)
+
+
+@pytest.fixture
+def exhaustive_sample_path():
+	return current_path + '/test_edi_835_files/exhaustive_sample.txt'
+
+
+@pytest.fixture
+def exhaustive_sample():
+	path = current_path + '/test_edi_835_files/exhaustive_sample.txt'
+	return edi_835_parser.parse(path)
