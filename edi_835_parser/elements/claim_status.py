@@ -60,7 +60,11 @@ def _lookup_status(code: str) -> Status:
 		warn(
 			f'ClaimStatus: Code {code} does not match a status in the edi-835-parser claim status registry.'
 		)
-		return Status('code', 'uncategorized', PayerClassification.UNKNOWN)
+		return Status(
+			code=code,
+			description='uncategorized',
+			payer_classification=PayerClassification.UNKNOWN,
+		)
 
 	return status[0]
 
