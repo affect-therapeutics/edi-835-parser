@@ -6,6 +6,7 @@ from edi_835_parser.segments.reference import Reference as ReferenceSegment
 from edi_835_parser.segments.date import Date as DateSegment
 from edi_835_parser.segments.amount import Amount as AmountSegment
 from edi_835_parser.segments.utilities import find_identifier
+from edi_835_parser.segments.payer_contact import PayerContact as PayerContactSegment
 from edi_835_parser.segments.inpatient_adjudication import (
 	InpatientAdjudication as InpatientAdjudicationSegment,
 )
@@ -51,6 +52,7 @@ class Claim:
 		self.inpatient = inpatient
 		self.outpatient = outpatient
 		self.adjustments = adjustments if adjustments else []
+		self.contacts = []
 
 	def __repr__(self):
 		return '\n'.join(str(item) for item in self.__dict__.items())
@@ -135,6 +137,13 @@ class Claim:
 				return amount.amount
 		return None
 
+	@property
+	def claim_payer_contact(self):
+		for contact in self.contacts:
+			if contact.code == 'payers_claim_office':
+				return contact
+		return None
+
 	@classmethod
 	def build(
 		cls, segment: str, segments: Iterator[str]
@@ -174,6 +183,11 @@ class Claim:
 					claim.amounts.append(amount)
 					segment = None
 
+				elif identifier == PayerContactSegment.identification:
+					contact = PayerContactSegment(segment)
+					claim.contacts.append(contact)
+					segment = None
+
 				elif identifier == InpatientAdjudicationSegment.identification:
 					inpatient = InpatientAdjudicationSegment(segment)
 					claim.inpatient = inpatient
@@ -193,8 +207,8 @@ class Claim:
 					return claim, segments, segment
 
 				else:
+					message = f'Identifier: {identifier} not handled in claim loop.  {segment}'
 					segment = None
-					message = f'Identifier: {identifier} not handled in claim loop.'
 					Logger.logr.warning(message)
 
 			except StopIteration:

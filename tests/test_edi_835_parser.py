@@ -1,4 +1,5 @@
 from decimal import Decimal
+import logging
 import os
 import subprocess
 
@@ -46,6 +47,21 @@ def test_build_remit_service_lines(blue_cross_nc_sample, emedny_sample, sample_8
 
 def test_total_interests(sample_935_with_interests):
 	assert sum_interests(sample_935_with_interests) == round(Decimal(10.3), 2)
+
+
+def test_can_parse_edi_files_without_warnings(exhaustive_sample_path, caplog):
+	import edi_835_parser
+
+	with caplog.at_level(logging.INFO, logger='edi_835_parser'):
+		edi_835_parser.parse(exhaustive_sample_path)
+		assert 'Identifier: PER not handled in claim loop.' not in caplog.text
+
+		# These are not yet supported
+		# assert 'Identifier: CUR not handled in transaction loop.'
+		# assert 'Identifier: RDM not handled in organization loop.'
+		# assert 'Identifier: TS2 not handled in transaction loop. '
+		# assert 'Identifier: QTY not handled in claim loop.'
+		# assert 'Identifier: QTY not handled in service loop.'
 
 
 def test_cli_output_snapshot():

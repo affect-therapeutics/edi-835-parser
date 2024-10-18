@@ -143,7 +143,7 @@ class Service:
 					return service, segment, segments
 
 				else:
-					message = f'Identifier: {identifier} not handled in service loop.'
+					message = f'Identifier: {identifier} not handled in service loop.  {segment}'
 					Logger.logr.warning(message)
 
 			except StopIteration:
