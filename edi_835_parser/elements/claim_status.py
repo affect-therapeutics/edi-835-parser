@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum, auto
+from typing import Optional
 from warnings import warn
 
 
@@ -25,32 +26,36 @@ class Status:
 	- code (:class:`str`): The code provided in the EDI 835 file.
 	- description (:class:`str`): The description of the code per `stedi <https://www.stedi.com/edi/x12/segment/CLP>`_.
 	- payer_classification (:class:`PayerClassification`)
+	- was_forwarded (:class:`bool`): True if the claim was forwarded to an additional payer
 	"""
 
 	code: str
 	description: str
 	payer_classification: PayerClassification
+	was_forwarded: bool
 
 
 _REGISTRY = [
-	Status('1', 'processed as primary', PayerClassification.PRIMARY),
-	Status('2', 'processed as secondary', PayerClassification.SECONDARY),
-	Status('3', 'processed as tertiary', PayerClassification.TERTIARY),
-	Status('4', 'denial', PayerClassification.UNSPECIFIED),
+	Status('1', 'processed as primary', PayerClassification.PRIMARY, False),
+	Status('2', 'processed as secondary', PayerClassification.SECONDARY, False),
+	Status('3', 'processed as tertiary', PayerClassification.TERTIARY, False),
+	Status('4', 'denial', PayerClassification.UNSPECIFIED, False),
 	Status(
-		'19', 'processed as primary, forwarded to additional payer(s)', PayerClassification.PRIMARY
+		'19', 'processed as primary, forwarded to additional payer(s)', PayerClassification.PRIMARY, True
 	),
 	Status(
 		'20',
 		'processed as secondary, forwarded to additional payer(s)',
 		PayerClassification.SECONDARY,
+    True,
 	),
 	Status(
 		'21',
 		'processed as tertiary, forwarded to additional payer(s)',
 		PayerClassification.TERTIARY,
+    True,
 	),
-	Status('22', 'reversal of previous payment', PayerClassification.UNSPECIFIED),
+	Status('22', 'reversal of previous payment', PayerClassification.UNSPECIFIED, False),
 ]
 
 

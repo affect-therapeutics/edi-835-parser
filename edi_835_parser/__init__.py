@@ -32,10 +32,12 @@ def parse_edi_string(edi_file_string) -> TransactionSet:
 	return TransactionSet.build_from_string(edi_file_string)
 
 
+
 def find_edi_835_files(path: str) -> List[str]:
 	files = []
 	for file in os.listdir(path):
 		files.append(file)
+
 
 	return files
 
