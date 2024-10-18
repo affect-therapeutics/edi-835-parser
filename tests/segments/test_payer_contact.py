@@ -16,8 +16,8 @@ def test_payer_contact_initialization():
 	assert payer_contact.communication_no_or_url_qualifier_2 == 'fax'
 	assert payer_contact.communication_no_or_url_2 == 'XXXXXX'
 
-	assert payer_contact.communication_no_or_url_qualifier_3 == 'EX'
-	assert payer_contact.communication_no_ext == 'XXX'
+	assert payer_contact.communication_no_or_url_qualifier_3 == 'ext'
+	assert payer_contact.communication_no_or_url_3 == 'XXX'
 
 
 def test_payer_contact_phone_number():
