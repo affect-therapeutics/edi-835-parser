@@ -29,3 +29,25 @@ def test_transaction_reference_identification_number(sample_835):
 def test_transaction_header_number(sample_835):
 	transaction = sample_835.transactions[0]
 	assert transaction.header_number.number == 1
+
+
+def test_payee_identification(sample_835):
+	transaction = sample_835.transactions[0]
+
+	assert transaction.payee_identification.value == '204881619'
+	assert transaction.payee_identification.qualifier_code == 'TJ'
+
+
+def test_payee_indentification_with_tax_id_on_n1(sample_835_with_func):
+	def modify(content):
+		return content.replace(
+			'N1*PE*UNIVERSITY HOSPITALS MEDICAL GROUP INC*XX*1669499414~',
+			'N1*PE*UNIVERSITY HOSPITALS MEDICAL GROUP INC*FI*130871925~',
+		)
+
+	sample_835 = sample_835_with_func(modify)
+	transaction = sample_835.transactions[0]
+
+	assert transaction.payee_identification.value == '130871925'
+	assert transaction.payee_identification.qualifier_code == 'TJ'
+	assert transaction.payee_identification.qualifier == 'federal taxpayer identification number'
