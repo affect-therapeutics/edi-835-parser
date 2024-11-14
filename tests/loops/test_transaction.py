@@ -38,7 +38,7 @@ def test_payee_identification(sample_835):
 	assert transaction.payee_identification.qualifier_code == 'TJ'
 
 
-def test_payee_indentification_with_tax_id_on_n1(sample_835_with_func):
+def test_payee_identification_with_tax_id_on_n1(sample_835_with_func):
 	def modify(content):
 		return content.replace(
 			'N1*PE*UNIVERSITY HOSPITALS MEDICAL GROUP INC*XX*1669499414~',
