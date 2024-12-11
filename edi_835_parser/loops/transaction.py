@@ -103,7 +103,7 @@ class Transaction:
 			return ref
 
 	@property
-	def payee_loop(self) -> OrganizationSegment:
+	def payee_loop(self) -> OrganizationLoop:
 		payee = [c for c in self.organizations if c.organization.type == 'payee']
 		assert len(payee) == 1
 		return payee[0]
@@ -114,11 +114,23 @@ class Transaction:
 
 	@property
 	def payee_identification(self) -> Optional[ReferenceSegment]:
-		payee_id = [c for c in self.organizations if c.organization.type == 'payee']
-		for a in payee_id:
-			for ref in a.references:
-				if ref.qualifier == 'federal taxpayer identification number':
-					return ref
+		"""
+		N1 includes the name of the entity, the entity type, and a id / qualifier.
+
+		This qualifier can be many different values but can be the federal taxpayer identification number (FI).  Some payers place this in the n1 segment while others add this as a labeled refrence.
+
+		This method ensures that a refrence compatible object is retruned regardless of where the payer places the tax id.
+
+		https://www.stedi.com/edi/x12-005010/segment/N1#N1-03
+		"""
+		if self.payee.identification_code_qualifier == 'FI':
+			return ReferenceSegment(
+				f'999:REF*TJ*{self.payee.identification_code}',
+			)
+
+		for ref in self.payee_loop.references:
+			if ref.qualifier == 'federal taxpayer identification number':
+				return ref
 
 	@property
 	def other_payee_identification(self) -> Optional[ReferenceSegment]:

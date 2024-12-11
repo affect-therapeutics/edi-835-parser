@@ -30,6 +30,21 @@ def sample_835():
 
 
 @pytest.fixture
+def sample_835_with_func():
+	def modify_file_content(modify_func=None):
+		path = current_path + '/test_edi_835_files/sample_835.txt'
+		base_content = open(path, 'r').read()
+		if modify_func:
+			content = modify_func(base_content)
+		else:
+			content = base_content
+
+		return edi_835_parser.parse_edi_string(content)
+
+	return modify_file_content
+
+
+@pytest.fixture
 def sample_935_with_interests():
 	path = current_path + '/test_edi_835_files/sample_835_with_interests.txt'
 	return edi_835_parser.parse(path)
