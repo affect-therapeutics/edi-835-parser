@@ -352,6 +352,7 @@ class TransactionSet:
 			else None,
 			'created_at': None,
 			'case_number': None,  # populated after transformation
+      'was_forwarded': claim.claim.status.was_forwarded,
 		}
 
 		if claim.subscriber:
@@ -418,6 +419,7 @@ class TransactionSet:
 			'payer_id_add': transaction.other_payer_identification.value
 			if transaction.other_payer_identification
 			else None,
+      
 			'created_at': None,
 		}
 
@@ -719,6 +721,7 @@ class TransactionSet:
 			end_date = service.service_period_end.date
 		elif claim.claim_statement_period_end:
 			end_date = claim.claim_statement_period_end.date
+
 
 		remit_service_lines_dict = {
 			'remit_key': claim.claim.key,
