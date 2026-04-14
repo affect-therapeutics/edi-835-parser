@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 install_requires = ['pandas']
 
-tests_require = ['pytest']
+tests_require = ['pytest>=9.0']
 
 setuptools.setup(
 	name='edi-835-parser',
