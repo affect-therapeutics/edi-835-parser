@@ -88,6 +88,6 @@ def test_cli_output_snapshot():
 	current_output_files = {file: open(file, 'r').read() for file in current_output}
 
 	# compare the output
-	assert (
-		output_file_contents == current_output_files
-	), 'Output files have changed run check git for differences'
+	assert output_file_contents == current_output_files, (
+		'Output files have changed run check git for differences'
+	)
