@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{include = "edi_835_parser"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 pandas = "^2.0.3"
 pytest = "^9.0.0"
 
